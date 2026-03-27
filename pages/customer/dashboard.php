@@ -170,6 +170,7 @@ $available_free = $free_gallons->get_result()->fetch_assoc()['count'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account - ISRAPHIL</title>
+    <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link rel="stylesheet" href="../../style/customer/dashboard.css?v=20260325">
 </head>
 <body>

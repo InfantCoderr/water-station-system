@@ -74,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISRAPHIL | Create Account</title>
+    <link rel="icon" type="image/png" href="image.gif/favicon.png">
     <link rel="stylesheet" href="style/register.css?v=20260325">
 </head>
 <body class="auth-page">

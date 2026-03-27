@@ -91,6 +91,7 @@ if (isset($_POST['change_password'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - ISRAPHIL</title>
+    <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link rel="stylesheet" href="../../style/customer/profile.css?v=20260325">
 </head>
 <body>

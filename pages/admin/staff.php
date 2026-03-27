@@ -117,6 +117,7 @@ $active_count = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = '
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Management - ISRAPHIL Admin</title>
+    <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link rel="stylesheet" href="../../style/admin/staff.css?v=20260325">
 </head>
 <body class="admin-page">

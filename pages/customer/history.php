@@ -58,6 +58,7 @@ $counts = $conn->query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order History - ISRAPHIL</title>
+    <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link rel="stylesheet" href="../../style/customer/history.css?v=20260325">
    
 </head>

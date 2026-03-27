@@ -1,0 +1,84 @@
+@import url('../theme.css?v=20260325');
+
+.container {
+    width: min(1000px, calc(100% - 32px));
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 0.78fr 1.22fr;
+    gap: 24px;
+}
+
+.profile-summary {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+}
+
+.account-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.account-chip.active {
+    background: rgba(20, 128, 95, 0.14);
+    color: var(--success);
+}
+
+.account-chip.inactive {
+    background: rgba(180, 81, 89, 0.14);
+    color: var(--danger);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(11, 34, 56, 0.08);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--muted);
+    min-width: 140px;
+}
+
+.info-value {
+    color: var(--text);
+    font-weight: 700;
+    text-align: right;
+}
+
+.form-panel {
+    margin-bottom: 24px;
+}
+
+.modal-box {
+    text-align: center;
+}
+
+@media (max-width: 880px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-row {
+        flex-direction: column;
+    }
+
+    .info-value {
+        text-align: left;
+    }
+}

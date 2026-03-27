@@ -1,0 +1,6 @@
+PROMBLES:
+
+1. we have promblem in staff dashboard specfically the part of updating the status of the order
+cause instead of just updating the status if you select mark as delivered you'll be redirected in admin dashboard
+instead of just updating and also if i update status in admin/orders the assigned orders status in staff/dashboard does not update 
+which is confusing and make the system messy

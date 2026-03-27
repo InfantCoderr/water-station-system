@@ -1,0 +1,31 @@
+@import url('../theme.css?v=20260325');
+
+.stats-grid .stat-card {
+    min-height: 170px;
+}
+
+.stat-card.pending {
+    background: linear-gradient(180deg, rgba(240, 187, 87, 0.14), rgba(255, 255, 255, 0.92));
+}
+
+.stat-card.delivering {
+    background: linear-gradient(180deg, rgba(17, 130, 170, 0.14), rgba(255, 255, 255, 0.92));
+}
+
+.stat-card.customers {
+    background: linear-gradient(180deg, rgba(23, 183, 169, 0.14), rgba(255, 255, 255, 0.92));
+}
+
+.stat-card.staff {
+    background: linear-gradient(180deg, rgba(180, 81, 89, 0.12), rgba(255, 255, 255, 0.92));
+}
+
+.stock-low {
+    color: var(--danger);
+    font-weight: 800;
+}
+
+.stock-ok {
+    color: var(--success);
+    font-weight: 800;
+}

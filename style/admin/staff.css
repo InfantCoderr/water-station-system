@@ -1,0 +1,12 @@
+@import url('../theme.css?v=20260325');
+
+.edit-form {
+    background: linear-gradient(135deg, rgba(17, 130, 170, 0.12), rgba(23, 183, 169, 0.08));
+}
+
+.cancel-link {
+    margin-left: 16px;
+    color: var(--muted);
+    font-weight: 700;
+    text-decoration: none;
+}

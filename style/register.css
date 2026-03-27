@@ -1,0 +1,58 @@
+@import url('auth.css?v=20260325');
+
+.register-form {
+    display: grid;
+    gap: 16px;
+}
+
+.register-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.register-grid .full-span {
+    grid-column: 1 / -1;
+}
+
+.delivery-notice {
+    padding: 20px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(240, 187, 87, 0.18), rgba(23, 183, 169, 0.12));
+    border: 1px solid rgba(240, 187, 87, 0.32);
+    color: var(--text);
+}
+
+.delivery-notice h3 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+}
+
+.delivery-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.delivery-check input {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+}
+
+.delivery-note {
+    margin-top: 12px;
+    font-size: 0.84rem;
+    color: var(--danger);
+}
+
+.required {
+    color: var(--danger);
+}
+
+@media (max-width: 720px) {
+    .register-grid {
+        grid-template-columns: 1fr;
+    }
+}

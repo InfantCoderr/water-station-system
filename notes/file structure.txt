@@ -1,0 +1,26 @@
+C:\xampp\htdocs\israphil-water-station\
+│
+├── 📁 includes/
+│   └── db_connect.php          ✅ Done
+│
+├── 📁 pages/
+│   ├── 📁 admin/
+│   │   ├── dashboard.php       ✅ Done
+│   │   ├── orders.php          ✅ Done
+│   │   ├── inventory.php       ✅ Done
+│   │   ├── staff.php           ✅ Done
+│   │   ├── customers.php       ✅ Done
+│   │   └── assign_delivery.php
+│   │
+│   ├── 📁 staff/
+│   │   └── (dashboard, deliveries, profile)
+│   │
+│   └── 📁 customer/
+│       ├── Dashboard with order  ✅ Done 
+│       ├── history               ✅ Done
+│       ├── profile
+│            
+│
+├── index.php                   ✅ Done
+├── logout.php                  ✅ Done
+└── register.php                ✅ Done

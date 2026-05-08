@@ -1,72 +1,71 @@
-@import url('../theme.css?v=20260325');
-
-.container {
-    width: min(1120px, calc(100% - 32px));
+.customer-topbar .container {
+    gap: 1rem;
 }
 
-.order-card {
-    padding: 24px;
-    margin-bottom: 18px;
+.customer-topbar-actions {
+    min-width: 0;
 }
 
-.order-card:last-child {
-    margin-bottom: 0;
+.customer-welcome {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
-.order-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 18px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid rgba(11, 34, 56, 0.08);
-}
-
-.order-id {
-    margin-bottom: 6px;
-    font-size: 1.2rem;
-    font-weight: 800;
-}
-
-.detail-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.detail-value {
-    color: var(--text);
-    font-weight: 700;
-}
-
-.delivery-info {
-    display: flex;
-    justify-content: space-between;
+.customer-profile-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px dashed rgba(11, 34, 56, 0.18);
+    justify-content: center;
 }
 
-.staff-badge.pending {
-    background: rgba(240, 187, 87, 0.16);
-    color: #8c5c07;
+.customer-profile-link svg {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
-.delivery-stamp {
-    color: var(--success);
-    font-size: 0.88rem;
-    font-weight: 700;
+.customer-logout-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
 }
 
-.empty-state .nav-tab {
-    margin-top: 16px;
+.customer-logout-btn:hover,
+.customer-logout-btn:focus {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+    color: #fff;
 }
 
-@media (max-width: 720px) {
-    .order-header {
-        flex-direction: column;
+@media (max-width: 575.98px) {
+    .customer-topbar .container {
+        flex-direction: row !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .customer-topbar-actions {
+        width: auto;
+        margin-left: auto;
+        justify-content: flex-end;
+        gap: 0.5rem !important;
+    }
+
+    .customer-topbar-actions .btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .customer-topbar-actions .customer-logout-btn {
+        min-width: 0;
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+    .customer-topbar .navbar-brand {
+        margin-bottom: 0;
+        font-size: 1rem;
     }
 }

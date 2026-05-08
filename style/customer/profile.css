@@ -1,84 +1,71 @@
-@import url('../theme.css?v=20260325');
-
-.container {
-    width: min(1000px, calc(100% - 32px));
+.customer-topbar .container {
+    gap: 1rem;
 }
 
-.profile-grid {
-    display: grid;
-    grid-template-columns: 0.78fr 1.22fr;
-    gap: 24px;
+.customer-topbar-actions {
+    min-width: 0;
 }
 
-.profile-summary {
-    display: grid;
-    gap: 18px;
-    align-content: start;
+.customer-welcome {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
-.account-chip {
+.customer-profile-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    justify-content: center;
 }
 
-.account-chip.active {
-    background: rgba(20, 128, 95, 0.14);
-    color: var(--success);
+.customer-profile-link svg {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
-.account-chip.inactive {
-    background: rgba(180, 81, 89, 0.14);
-    color: var(--danger);
+.customer-logout-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
 }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(11, 34, 56, 0.08);
+.customer-logout-btn:hover,
+.customer-logout-btn:focus {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+    color: #fff;
 }
 
-.info-row:last-child {
-    border-bottom: none;
-}
-
-.info-label {
-    color: var(--muted);
-    min-width: 140px;
-}
-
-.info-value {
-    color: var(--text);
-    font-weight: 700;
-    text-align: right;
-}
-
-.form-panel {
-    margin-bottom: 24px;
-}
-
-.modal-box {
-    text-align: center;
-}
-
-@media (max-width: 880px) {
-    .profile-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 575.98px) {
+    .customer-topbar .container {
+        flex-direction: row !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
     }
 
-    .info-row {
-        flex-direction: column;
+    .customer-topbar-actions {
+        width: auto;
+        margin-left: auto;
+        justify-content: flex-end;
+        gap: 0.5rem !important;
     }
 
-    .info-value {
-        text-align: left;
+    .customer-topbar-actions .btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .customer-topbar-actions .customer-logout-btn {
+        min-width: 0;
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+    .customer-topbar .navbar-brand {
+        margin-bottom: 0;
+        font-size: 1rem;
     }
 }

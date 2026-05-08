@@ -13,13 +13,10 @@ if (isset($_SESSION['user_id'])) {
         case 'customer': header("Location: pages/customer/dashboard.php"); exit();
     }
 }
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST['username'])) {
-    header("Location: index.php");
-    exit();
-}
 
 $error = '';
 $success = '';
+$prefill_username = '';
 
 // Handle login ONLY if actually submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -71,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // This prevents form resubmission on refresh!
     if (!empty($error)) {
         $_SESSION['login_error'] = $error;
+        $_SESSION['login_username'] = $username;
         header("Location: index.php");
         exit();
     }
@@ -80,6 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if (isset($_SESSION['login_error'])) {
     $error = $_SESSION['login_error'];
     unset($_SESSION['login_error']); // Clear it so refresh won't show again
+}
+
+if (isset($_SESSION['login_username'])) {
+    $prefill_username = $_SESSION['login_username'];
+    unset($_SESSION['login_username']);
 }
 
 if (isset($_SESSION['login_success'])) {
@@ -94,72 +97,115 @@ if (isset($_SESSION['login_success'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISRAPHIL | Sign In</title>
     <link rel="icon" type="image/png" href="image.gif/favicon.png">
-    <link rel="stylesheet" href="style/auth.css?v=20260325">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="auth-page">
-    <main class="auth-shell">
-        <section class="auth-visual">
-            <div class="auth-copy">
-                <span class="auth-badge">Water Delivery Workspace</span>
-                <h1>Fresh water.<br>Sharper operations.</h1>
-                <p>Run customer orders, delivery schedules, inventory updates, and loyalty tracking from one clean workspace designed for a modern water station.</p>
-                <ul class="auth-feature-list">
-                    <li>Role-based access<span>Separate spaces for admins, staff, and customers keep each workflow focused.</span></li>
-                    <li>Live daily control<span>Review orders, assignments, and stock levels without digging through cluttered screens.</span></li>
-                    <li>Ready for growth<span>A cleaner experience helps your team work faster and makes the system feel more professional.</span></li>
-                </ul>
-            </div>
-            <div class="auth-showcase">
-                <div class="auth-demo-card">
-                    <span class="auth-badge">Demo Access</span>
-                    <strong>Admin preview account</strong>
-                    <p>Use the included demo account to explore the full management dashboard.</p>
-                    <code>admin / admin123</code>
-                </div>
-                <img class="auth-illustration auth-illustration-rounded" src="image.gif\water.png" alt="Water delivery illustration">
-            </div>
-        </section>
+<body class="bg-info-subtle">
+    <main class="container py-4 py-lg-5">
+        <section class="card border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <section class="col-lg-5 bg-primary text-white p-4 p-lg-5 d-flex align-items-center">
+                    <div class="w-100">
+                        <div class="mb-4">
+                            <span class="badge text-bg-light text-primary mb-3">ISRAPHIL</span>
+                            <h1 class="display-6 fw-bold mb-3">Water Station Website</h1>
+                            <p class="mb-0 text-white-50">Sign in to manage your account and orders, or explore our services.</p>
+                        </div>
 
-        <section class="auth-panel">
-            <div class="box auth-card">
-                <span class="auth-mark">Sign In</span>
-                <h2>Welcome back</h2>
-                <p class="auth-subtitle">Enter your account details to open the ISRAPHIL Water Station workspace.</p>
+                        <div class="card border-0 shadow">
+                            <div class="card-body p-4">
+                                <span class="badge text-bg-primary mb-3">Sign In</span>
+                                <h2 class="h3 fw-bold text-dark mb-2">Welcome back</h2>
+                                <p class="text-secondary mb-4">Enter your account details to continue.</p>
 
-                <?php if (!empty($error)): ?>
-                    <div class="auth-error"><?php echo htmlspecialchars($error); ?></div>
-                <?php endif; ?>
+                                <?php if (!empty($error)): ?>
+                                    <div class="alert alert-danger" role="alert"><?php echo htmlspecialchars($error); ?></div>
+                                <?php endif; ?>
 
-                <?php if (!empty($success)): ?>
-                    <div class="auth-success"><?php echo htmlspecialchars($success); ?></div>
-                <?php endif; ?>
+                                <?php if (!empty($success)): ?>
+                                    <div class="alert alert-success" role="alert"><?php echo htmlspecialchars($success); ?></div>
+                                <?php endif; ?>
 
-                <form method="POST" action="">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input id="username" type="text" name="username" placeholder="Enter your username" required autocomplete="username">
+                                <form method="POST" action="">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label text-dark">Username</label>
+                                        <input id="username" class="form-control" type="text" name="username" value="<?php echo htmlspecialchars($prefill_username); ?>" placeholder="Enter your username" required autocomplete="username">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label text-dark">Password</label>
+                                        <input id="password" class="form-control" type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                                    </div>
+                                    <div class="text-end mb-3">
+                                        <a class="link-primary text-decoration-none" href="forgot_password.php">Forgot password?</a>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Log In</button>
+                                    </div>
+                                </form>
+
+                                <div class="border-top pt-3 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                    <span class="text-secondary">New customer?</span>
+                                    <a class="fw-semibold text-decoration-none" href="register.php">Create an account</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input id="password" type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
-                    </div>
-                    <div class="auth-aux">
-                        <a href="forgot_password.php">Forgot your password?</a>
-                    </div>
-                    <button type="submit">Continue to Dashboard</button>
-                </form>
+                </section>
 
-                <div class="auth-links">
-                    <span>Need a customer account?</span>
-                    <a href="register.php">Create one here</a>
-                </div>
+                <section class="col-lg-7 bg-light p-4 p-lg-5">
+                    <div class="mb-4">
+                        <span class="badge text-bg-info mb-3">About Us</span>
+                        <h2 class="fw-bold text-primary mb-3">Fresh water and reliable service.</h2>
+                        <p class="text-secondary">ISRAPHIL Water Station supports homes and businesses with water refilling and delivery, backed by a simple system that keeps service organized.</p>
+                    </div>
 
-                <div class="auth-meta">
-                    <span>ISRAPHIL Water Station</span>
-                    <a href="register.php">Customer registration</a>
-                </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <article class="card h-100 border-info-subtle">
+                                <div class="card-body">
+                                    <span class="badge text-bg-light text-primary mb-2">Brand</span>
+                                    <h3 class="h5 fw-bold">The brand</h3>
+                                    <p class="text-secondary mb-0">Built around trust, cleanliness, reliability, and everyday convenience.</p>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="col-md-6">
+                            <article class="card h-100 border-info-subtle">
+                                <div class="card-body">
+                                    <span class="badge text-bg-light text-primary mb-2">Station</span>
+                                    <h3 class="h5 fw-bold">The station</h3>
+                                    <p class="text-secondary mb-0">An organized workflow for tracking orders, coordinating deliveries, and serving repeat customers.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="card border-warning-subtle">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-5 p-3">
+                                <img class="img-fluid rounded" src="image.gif/water.png" alt="Water station illustration">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <span class="badge text-bg-info mb-3">What We Offer</span>
+                                    <h3 class="h4 fw-bold mb-3">Water service with a cleaner online experience.</h3>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item px-0">Purified water refilling for homes and small businesses</li>
+                                        <li class="list-group-item px-0">Delivery support and customer account access</li>
+                                        <li class="list-group-item px-0">Dedicated dashboards for admin, staff, and customers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
+
+            <footer class="bg-white border-top px-4 py-3 d-flex flex-column flex-md-row justify-content-between gap-2 text-secondary small">
+                <span>ISRAPHIL Water Station | Basista, Pangasinan</span>
+                <span>Clean water, dependable delivery, organized service.</span>
+            </footer>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

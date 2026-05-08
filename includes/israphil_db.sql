@@ -402,6 +402,22 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `customer_delivery_addresses`
+--
+
+CREATE TABLE `customer_delivery_addresses` (
+  `address_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `label` varchar(80) NOT NULL DEFAULT 'Delivery Address',
+  `address` text NOT NULL,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `view_active_orders`
 -- (See below for the actual view)
 --
@@ -487,6 +503,13 @@ ALTER TABLE `activity_logs`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `customer_delivery_addresses`
+--
+ALTER TABLE `customer_delivery_addresses`
+  ADD PRIMARY KEY (`address_id`),
+  ADD KEY `idx_customer_delivery_addresses_customer` (`customer_id`);
+
+--
 -- Indexes for table `deliveries`
 --
 ALTER TABLE `deliveries`
@@ -554,6 +577,12 @@ ALTER TABLE `activity_logs`
   MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
+-- AUTO_INCREMENT for table `customer_delivery_addresses`
+--
+ALTER TABLE `customer_delivery_addresses`
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `deliveries`
 --
 ALTER TABLE `deliveries`
@@ -604,6 +633,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `activity_logs`
   ADD CONSTRAINT `activity_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `customer_delivery_addresses`
+--
+ALTER TABLE `customer_delivery_addresses`
+  ADD CONSTRAINT `customer_delivery_addresses_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `deliveries`

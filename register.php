@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'includes/db_connect.php';
+require_once 'includes/address_helpers.php';
 
 // If already logged in, redirect
 if (isset($_SESSION['user_id'])) {
@@ -13,24 +14,8 @@ if (isset($_SESSION['user_id'])) {
 
 $error = '';
 $success = '';
-$location_confirm = false;
-
-function ensure_customer_delivery_addresses_table($conn) {
-    $conn->query("
-        CREATE TABLE IF NOT EXISTS customer_delivery_addresses (
-            address_id INT(11) NOT NULL AUTO_INCREMENT,
-            customer_id INT(11) NOT NULL,
-            label VARCHAR(80) NOT NULL DEFAULT 'Delivery Address',
-            address TEXT NOT NULL,
-            is_default TINYINT(1) NOT NULL DEFAULT 0,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (address_id),
-            KEY idx_customer_delivery_addresses_customer (customer_id),
-            CONSTRAINT customer_delivery_addresses_ibfk_1 FOREIGN KEY (customer_id) REFERENCES users (user_id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    ");
-}
+$service_areas = fetch_delivery_service_areas($conn);
+$delivery_area_json = delivery_area_index_json($service_areas);
 
 // Handle registration
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -40,14 +25,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email'] ?? '');
     $full_name = trim($_POST['full_name'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $location_confirm = isset($_POST['location_confirm']);
+    $structured_address = delivery_address_from_post();
+    $address = format_delivery_address(
+        $structured_address['street_address'],
+        $structured_address['barangay'],
+        $structured_address['city'],
+        $structured_address['province']
+    );
+    $service_area = delivery_address_is_complete($structured_address)
+        ? find_delivery_service_area($conn, $structured_address['province'], $structured_address['city'], $structured_address['barangay'])
+        : null;
 
-    // Validation - CHECK LOCATION FIRST
-    if (!$location_confirm) {
-        $error = "You must confirm your location is within our delivery area (Basista, Pangasinan and nearby).";
-    } elseif (empty($username) || empty($password) || empty($email) || empty($full_name) || empty($phone) || empty($address)) {
+    // Validate location first so unsupported addresses are rejected before account creation.
+    if (empty($username) || empty($password) || empty($email) || empty($full_name) || empty($phone) || !delivery_address_is_complete($structured_address)) {
         $error = "All fields are required.";
+    } elseif (!$service_area) {
+        $error = "This delivery address is outside our current coverage. Please choose a listed Pangasinan province, city, and barangay combination.";
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters.";
     } elseif ($password !== $confirm_password) {
@@ -67,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Hash password
             $hash = password_hash($password, PASSWORD_DEFAULT);
 
-            ensure_customer_delivery_addresses_table($conn);
+            ensure_delivery_service_area_schema($conn);
 
             $conn->begin_transaction();
             try {
@@ -90,8 +83,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $address_label = 'Main Delivery Address';
                 $is_default = 1;
-                $delivery_address = $conn->prepare("INSERT INTO customer_delivery_addresses (customer_id, label, address, is_default) VALUES (?, ?, ?, ?)");
-                $delivery_address->bind_param("issi", $customer_id, $address_label, $address, $is_default);
+                $service_area_id = (int) ($service_area['area_id'] ?? 0);
+                $delivery_address = $conn->prepare("INSERT INTO customer_delivery_addresses (customer_id, label, address, street_address, barangay, city, province, service_area_id, is_default) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $delivery_address->bind_param(
+                    "issssssii",
+                    $customer_id,
+                    $address_label,
+                    $address,
+                    $structured_address['street_address'],
+                    $structured_address['barangay'],
+                    $structured_address['city'],
+                    $structured_address['province'],
+                    $service_area_id,
+                    $is_default
+                );
                 if (!$delivery_address->execute()) {
                     throw new Exception("Registration failed. Please try again.");
                 }
@@ -213,23 +218,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="invalid-feedback">Please enter your phone number.</div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="address" class="form-label">Delivery Address <span class="text-danger">*</span></label>
-                                    <input id="address" class="form-control form-control-lg" type="text" name="address" value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>" required placeholder="Street, Barangay, City" autocomplete="street-address">
-                                    <div class="form-text">Include enough detail for smooth delivery.</div>
-                                    <div class="form-text text-primary">You can add more delivery addresses later from your customer dashboard.</div>
-                                    <div class="invalid-feedback">Please enter your delivery address.</div>
+                                    <label for="street_address" class="form-label">Street / House Details <span class="text-danger">*</span></label>
+                                    <textarea id="street_address" class="form-control form-control-lg" name="street_address" rows="2" required placeholder="House no., street, landmark" autocomplete="street-address"><?php echo htmlspecialchars($_POST['street_address'] ?? ''); ?></textarea>
+                                    <div class="form-text">Add the exact house, street, purok, or landmark for the rider.</div>
+                                    <div class="invalid-feedback">Please enter your street or house details.</div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="border rounded-4 bg-info-subtle p-3">
-                                        <p class="small fw-semibold mb-2">Delivery area: Basista, Pangasinan and nearby locations only.</p>
-                                        <div class="form-check">
-                                            <input id="location_confirm" class="form-check-input" type="checkbox" name="location_confirm" value="1" <?php echo $location_confirm ? 'checked' : ''; ?> required>
-                                            <label for="location_confirm" class="form-check-label small">
-                                                I confirm this address is within the delivery area.
-                                            </label>
-                                            <div class="invalid-feedback">Please confirm your delivery area before submitting.</div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="province" class="form-label">Province <span class="text-danger">*</span></label>
+                                    <select id="province" class="form-select form-select-lg" name="province" required data-current="<?php echo htmlspecialchars($_POST['province'] ?? ''); ?>">
+                                        <option value="">Choose province</option>
+                                    </select>
+                                    <div class="form-text">Coverage is checked against the service-area database.</div>
+                                    <div class="invalid-feedback">Please choose a supported province.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City / Municipality <span class="text-danger">*</span></label>
+                                    <select id="city" class="form-select form-select-lg" name="city" required data-current="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>">
+                                        <option value="">Choose city or municipality</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please choose a supported city or municipality.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="barangay" class="form-label">Barangay <span class="text-danger">*</span></label>
+                                    <select id="barangay" class="form-select form-select-lg" name="barangay" required data-current="<?php echo htmlspecialchars($_POST['barangay'] ?? ''); ?>">
+                                        <option value="">Choose barangay</option>
+                                    </select>
+                                    <div class="form-text text-primary">Barangay is used for delivery routing and coverage checks.</div>
+                                    <div class="invalid-feedback">Please choose a supported barangay.</div>
                                 </div>
                             </div>
                         </div>
@@ -281,6 +296,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const deliveryAreas = <?php echo $delivery_area_json ?: '{}'; ?>;
+        const provinceSelect = document.getElementById('province');
+        const citySelect = document.getElementById('city');
+        const barangaySelect = document.getElementById('barangay');
+
+        function fillSelect(select, values, placeholder, selectedValue = '') {
+            if (!select) {
+                return;
+            }
+
+            select.innerHTML = '';
+            const placeholderOption = new Option(placeholder, '');
+            select.add(placeholderOption);
+
+            values.forEach(value => {
+                const option = new Option(value, value);
+                option.selected = value === selectedValue;
+                select.add(option);
+            });
+        }
+
+        function refreshCities() {
+            const province = provinceSelect?.value || '';
+            const selectedCity = citySelect?.dataset.current || '';
+            const cities = province && deliveryAreas[province] ? Object.keys(deliveryAreas[province]) : [];
+            fillSelect(citySelect, cities, 'Choose city or municipality', selectedCity);
+            citySelect.dataset.current = '';
+            refreshBarangays();
+        }
+
+        function refreshBarangays() {
+            const province = provinceSelect?.value || '';
+            const city = citySelect?.value || '';
+            const selectedBarangay = barangaySelect?.dataset.current || '';
+            const barangays = province && city && deliveryAreas[province]?.[city] ? deliveryAreas[province][city] : [];
+            fillSelect(barangaySelect, barangays, 'Choose barangay', selectedBarangay);
+            barangaySelect.dataset.current = '';
+        }
+
+        if (provinceSelect && citySelect && barangaySelect) {
+            fillSelect(provinceSelect, Object.keys(deliveryAreas), 'Choose province', provinceSelect.dataset.current || '');
+            refreshCities();
+            provinceSelect.addEventListener('change', refreshCities);
+            citySelect.addEventListener('change', refreshBarangays);
+        }
+
         document.querySelectorAll('[data-password-toggle]').forEach(button => {
             button.addEventListener('click', () => {
                 const input = document.getElementById(button.dataset.passwordToggle);

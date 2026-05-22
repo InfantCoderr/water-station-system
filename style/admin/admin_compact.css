@@ -1,0 +1,201 @@
+.bg-israphil-sidebar {
+    background: linear-gradient(180deg, #062034 0%, #0b2f4a 55%, #0f4c6f 100%);
+}
+
+@media (min-width: 992px) {
+    .admin-floating-sidebar {
+        position: fixed;
+        top: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        z-index: 1020;
+        width: 280px;
+        min-height: auto !important;
+        border-radius: 1.25rem;
+        box-shadow: 0 1rem 3rem rgba(6, 32, 52, 0.28);
+        overflow-y: auto;
+    }
+
+    .admin-floating-content {
+        margin-left: 304px;
+        width: calc(100% - 304px);
+    }
+}
+
+.admin-order-toggle {
+    color: #fff;
+}
+
+.admin-order-toggle .bi-chevron-right {
+    transition: transform 0.2s ease;
+}
+
+.admin-order-toggle[aria-expanded="true"] .bi-chevron-right {
+    transform: rotate(90deg);
+}
+
+.admin-order-subnav {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.25rem 0 0.45rem 2rem;
+}
+
+.admin-order-subnav a {
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    padding: 0.28rem 0.65rem;
+    text-decoration: none;
+}
+
+.admin-order-subnav a:hover,
+.admin-order-subnav a.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.order-process {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-width: 240px;
+}
+
+.order-process .badge {
+    font-weight: 600;
+}
+
+.admin-attention-card {
+    border-top: 4px solid transparent !important;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.admin-attention-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.75rem 1.75rem rgba(13, 110, 253, 0.12) !important;
+}
+
+.admin-attention-card.is-primary {
+    border-top-color: #0d6efd !important;
+}
+
+.admin-attention-card.is-success {
+    border-top-color: #198754 !important;
+}
+
+.admin-attention-card.is-warning {
+    border-top-color: #ffc107 !important;
+}
+
+.admin-attention-card.is-danger {
+    border-top-color: #dc3545 !important;
+}
+
+.admin-chart-wrap {
+    position: relative;
+    min-height: 260px;
+}
+
+.admin-chart-wrap-sm {
+    min-height: 220px;
+}
+
+.admin-queue-tile {
+    height: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.85rem;
+    background: #fff;
+}
+
+.admin-queue-tile.is-warning {
+    border-color: rgba(255, 193, 7, 0.55);
+    background: rgba(255, 193, 7, 0.08);
+}
+
+.admin-floating-content {
+    font-size: 0.94rem;
+}
+
+.admin-floating-content main.container-fluid {
+    padding-top: 1rem !important;
+    padding-bottom: 1.25rem !important;
+}
+
+.admin-floating-content .navbar {
+    min-height: 58px;
+}
+
+.admin-floating-content .navbar-brand {
+    font-size: 1.1rem;
+}
+
+.admin-floating-content .card {
+    border-radius: 0.55rem;
+}
+
+.admin-floating-content .card-body {
+    padding: 0.95rem;
+}
+
+.admin-floating-content .card-body.p-4,
+.admin-floating-content .card-header.p-4 {
+    padding: 1rem !important;
+}
+
+.admin-floating-content .card-header.pb-0 {
+    padding-bottom: 0 !important;
+}
+
+.admin-floating-content .display-6 {
+    font-size: 1.45rem;
+    line-height: 1.15;
+}
+
+.admin-floating-content h1.display-6 {
+    font-size: 1.35rem;
+    max-width: 780px;
+}
+
+.admin-floating-content .h2,
+.admin-floating-content h2.h4,
+.admin-floating-content .h4 {
+    font-size: 1.08rem;
+}
+
+.admin-floating-content .h5,
+.admin-floating-content h3.h5 {
+    font-size: 0.98rem;
+}
+
+.admin-floating-content .row.g-3,
+.admin-floating-content .row.g-4 {
+    --bs-gutter-x: 0.75rem;
+    --bs-gutter-y: 0.75rem;
+}
+
+.admin-floating-content section.mb-4 {
+    margin-bottom: 1rem !important;
+}
+
+.admin-floating-content .table > :not(caption) > * > * {
+    padding: 0.55rem 0.65rem;
+}
+
+.admin-floating-content .badge {
+    font-size: 0.74rem;
+}
+
+.admin-floating-content .btn {
+    --bs-btn-padding-y: 0.32rem;
+    --bs-btn-padding-x: 0.65rem;
+}
+
+.admin-floating-content .btn-sm {
+    --bs-btn-padding-y: 0.22rem;
+    --bs-btn-padding-x: 0.5rem;
+}
+
+.admin-floating-content .alert {
+    padding: 0.75rem 1rem;
+}

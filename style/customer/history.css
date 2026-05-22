@@ -11,31 +11,71 @@
     overflow-wrap: anywhere;
 }
 
-.customer-profile-link {
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0;
+.customer-menu-button {
+    min-height: 2.5rem;
+    padding: 0.45rem 0.85rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    color: #0d6efd;
+    font-weight: 700;
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.14);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.customer-profile-link svg {
-    width: 1.5rem;
-    height: 1.5rem;
+.customer-menu-button:hover,
+.customer-menu-button:focus {
+    color: #0a58ca;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.18);
 }
 
-.customer-logout-btn {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #fff;
+.customer-menu-button:active {
+    transform: translateY(1px);
 }
 
-.customer-logout-btn:hover,
-.customer-logout-btn:focus {
-    background-color: #bb2d3b;
-    border-color: #b02a37;
-    color: #fff;
+.customer-menu-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.customer-menu-text {
+    line-height: 1;
+}
+
+.customer-topbar-actions .dropdown-menu {
+    min-width: 11.5rem;
+    padding: 0.45rem;
+    border: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 1rem 2rem rgba(13, 38, 76, 0.18);
+}
+
+.customer-topbar-actions .dropdown-item {
+    border-radius: 0.55rem;
+    padding: 0.55rem 0.75rem;
+    font-weight: 600;
+}
+
+.customer-topbar-actions .dropdown-item.active {
+    background-color: #0d6efd;
+}
+
+.customer-topbar-actions .dropdown-header {
+    padding: 0.35rem 0.75rem 0.25rem;
+    color: #6c757d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.customer-topbar-actions .dropdown-item.text-danger:hover,
+.customer-topbar-actions .dropdown-item.text-danger:focus {
+    background-color: #f8d7da;
+    color: #842029 !important;
 }
 
 @media (max-width: 575.98px) {
@@ -56,12 +96,6 @@
     .customer-topbar-actions .btn {
         flex: 0 0 auto;
         white-space: nowrap;
-    }
-
-    .customer-topbar-actions .customer-logout-btn {
-        min-width: 0;
-        padding-left: 0.85rem;
-        padding-right: 0.85rem;
     }
 
     .customer-topbar .navbar-brand {

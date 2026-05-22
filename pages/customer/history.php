@@ -3,10 +3,12 @@ session_start();
 require_once __DIR__ . '/../../includes/db_connect.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/order_logic.php';
+require_once __DIR__ . '/../../includes/customer_navbar.php';
 
 require_active_session($conn, ['customer'], '../../index.php');
 
 $customer_id = $_SESSION['user_id'];
+ensure_free_gallon_redemption_usage_column($conn);
 
 // Get filter
 $status_filter = sanitize_status_filter($_GET['status'] ?? 'all', ['all', 'pending', 'confirmed', 'processing', 'out_for_delivery', 'delivered', 'cancelled']);
@@ -18,11 +20,18 @@ if ($status_filter !== 'all') {
 // Get all orders with details
 $orders_query = "
     SELECT o.*, i.item_name, oi.quantity, oi.unit_price,
+           COALESCE(fr.redeemed_free_gallons, 0) AS redeemed_free_gallons,
            d.delivery_status, d.delivered_at,
            s.full_name as staff_name
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN inventory i ON oi.inventory_id = i.inventory_id
+    LEFT JOIN (
+        SELECT used_order_id, COUNT(*) AS redeemed_free_gallons
+        FROM free_gallon_redemptions
+        WHERE status = 'used' AND used_order_id IS NOT NULL
+        GROUP BY used_order_id
+    ) fr ON fr.used_order_id = o.order_id
     LEFT JOIN deliveries d ON o.order_id = d.order_id
     LEFT JOIN users s ON d.staff_id = s.user_id
     WHERE o.customer_id = ? $where_clause
@@ -61,7 +70,6 @@ function customer_history_delivery_badge_class($status) {
     switch ($status) {
         case 'assigned':
             return 'text-bg-info';
-        case 'picked_up':
         case 'in_transit':
             return 'text-bg-primary';
         case 'delivered':
@@ -69,6 +77,8 @@ function customer_history_delivery_badge_class($status) {
         case 'failed':
         case 'returned':
             return 'text-bg-danger';
+        case 'cancelled':
+            return 'text-bg-secondary';
         default:
             return 'text-bg-secondary';
     }
@@ -99,6 +109,18 @@ $delivering_count = (int) ($counts['delivering'] ?? 0);
 $delivered_count = (int) ($counts['delivered'] ?? 0);
 $cancelled_count = (int) ($counts['cancelled'] ?? 0);
 $active_count = $pending_count + $confirmed_count + $processing_count + $delivering_count;
+
+$history_filter_options = [
+    'all' => ['label' => 'All Orders', 'count' => $total_count, 'href' => 'history.php'],
+    'pending' => ['label' => 'Pending', 'count' => $pending_count, 'href' => 'history.php?status=pending'],
+    'confirmed' => ['label' => 'Confirmed', 'count' => $confirmed_count, 'href' => 'history.php?status=confirmed'],
+    'processing' => ['label' => 'Processing', 'count' => $processing_count, 'href' => 'history.php?status=processing'],
+    'out_for_delivery' => ['label' => 'Out for Delivery', 'count' => $delivering_count, 'href' => 'history.php?status=out_for_delivery'],
+    'delivered' => ['label' => 'Delivered', 'count' => $delivered_count, 'href' => 'history.php?status=delivered'],
+    'cancelled' => ['label' => 'Cancelled', 'count' => $cancelled_count, 'href' => 'history.php?status=cancelled'],
+];
+$current_filter_label = $history_filter_options[$status_filter]['label'] ?? 'All Orders';
+$current_filter_count = $history_filter_options[$status_filter]['count'] ?? $total_count;
 ?>
 
 <!DOCTYPE html>
@@ -110,36 +132,19 @@ $active_count = $pending_count + $confirmed_count + $processing_count + $deliver
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/customer/history.css">
+    <link rel="stylesheet" href="../../style/customer/navbar.css">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm customer-topbar">
-        <div class="container d-flex flex-column flex-lg-row align-items-lg-center">
-            <a href="dashboard.php" class="navbar-brand fw-bold">ISRAPHIL</a>
-            <div class="ms-lg-auto d-flex flex-wrap align-items-center justify-content-center justify-content-lg-end gap-2 gap-sm-3 text-white customer-topbar-actions">
-                <a href="../../logout.php" class="btn btn-sm rounded-pill customer-logout-btn">Logout</a>
-                <a href="profile.php" class="btn btn-light btn-sm rounded-circle customer-profile-link" aria-label="Open profile" title="My Profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <?php render_customer_navbar('history'); ?>
 
     <main class="container py-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
             <div>
                 <span class="badge text-bg-primary mb-3">Order History</span>
-                <h1 class="h3 fw-bold mb-2"><?php echo $status_filter !== 'all' ? ucfirst(str_replace('_', ' ', $status_filter)) : 'All'; ?> Orders</h1>
+                <h1 class="h3 fw-bold mb-2"><?php echo htmlspecialchars($current_filter_label); ?></h1>
                 <p class="text-secondary mb-0">Review every order, delivery detail, and assignment history in one place.</p>
             </div>
         </div>
-
-        <ul class="nav nav-pills gap-2 mb-4">
-            <li class="nav-item"><a href="dashboard.php" class="nav-link">Place Order</a></li>
-            <li class="nav-item"><a href="history.php" class="nav-link active">Order History</a></li>
-        </ul>
 
         <div class="row g-3 mb-4">
             <div class="col-6 col-lg-3">
@@ -176,32 +181,34 @@ $active_count = $pending_count + $confirmed_count + $processing_count + $deliver
             </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-2 mb-4">
-            <a href="history.php" class="btn btn-sm <?php echo $status_filter == 'all' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                All <span class="badge <?php echo $status_filter == 'all' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $total_count; ?></span>
-            </a>
-            <a href="history.php?status=pending" class="btn btn-sm <?php echo $status_filter == 'pending' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                Pending <span class="badge <?php echo $status_filter == 'pending' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $pending_count; ?></span>
-            </a>
-            <a href="history.php?status=confirmed" class="btn btn-sm <?php echo $status_filter == 'confirmed' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                Confirmed <span class="badge <?php echo $status_filter == 'confirmed' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $confirmed_count; ?></span>
-            </a>
-            <a href="history.php?status=out_for_delivery" class="btn btn-sm <?php echo $status_filter == 'out_for_delivery' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                Out for Delivery <span class="badge <?php echo $status_filter == 'out_for_delivery' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $delivering_count; ?></span>
-            </a>
-            <a href="history.php?status=delivered" class="btn btn-sm <?php echo $status_filter == 'delivered' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                Delivered <span class="badge <?php echo $status_filter == 'delivered' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $delivered_count; ?></span>
-            </a>
-            <a href="history.php?status=cancelled" class="btn btn-sm <?php echo $status_filter == 'cancelled' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                Cancelled <span class="badge <?php echo $status_filter == 'cancelled' ? 'text-bg-light text-primary' : 'text-bg-primary'; ?> ms-1"><?php echo $cancelled_count; ?></span>
-            </a>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-4">
+            <div>
+                <div class="small text-secondary">Order status</div>
+                <div class="fw-semibold"><?php echo htmlspecialchars($current_filter_label); ?> <span class="badge text-bg-primary ms-1"><?php echo $current_filter_count; ?></span></div>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <?php echo htmlspecialchars($current_filter_label); ?>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm-end">
+                    <?php foreach ($history_filter_options as $filter_key => $filter_option): ?>
+                        <?php $filter_active = $status_filter === $filter_key; ?>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between gap-3 <?php echo $filter_active ? 'active' : ''; ?>" href="<?php echo htmlspecialchars($filter_option['href']); ?>">
+                                <span><?php echo htmlspecialchars($filter_option['label']); ?></span>
+                                <span class="badge <?php echo $filter_active ? 'text-bg-light text-primary' : 'text-bg-primary'; ?>"><?php echo (int) $filter_option['count']; ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </div>
 
         <section class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
                     <div>
-                        <h2 class="h5 fw-bold mb-1"><?php echo $status_filter !== 'all' ? ucfirst(str_replace('_', ' ', $status_filter)) : 'All'; ?> Orders</h2>
+                        <h2 class="h5 fw-bold mb-1"><?php echo htmlspecialchars($current_filter_label); ?></h2>
                         <p class="small text-secondary mb-0"><?php echo $orders->num_rows; ?> order(s) shown for this view.</p>
                     </div>
                     <?php if ($status_filter !== 'all'): ?>
@@ -234,14 +241,23 @@ $active_count = $pending_count + $confirmed_count + $processing_count + $deliver
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Item</div>
                                 <div class="fw-semibold"><?php echo htmlspecialchars($order['item_name']); ?></div>
+                                <?php if ((int) ($order['redeemed_free_gallons'] ?? 0) > 0): ?>
+                                    <div class="small text-success fw-semibold">Includes <?php echo (int) $order['redeemed_free_gallons']; ?> free gallon(s)</div>
+                                <?php endif; ?>
                         </div>
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Quantity</div>
-                                <div class="fw-semibold"><?php echo (int) $order['quantity']; ?> gallons</div>
+                                <div class="fw-semibold">
+                                    <?php echo (int) $order['quantity']; ?> gallons
+                                    <?php if ((int) ($order['redeemed_free_gallons'] ?? 0) > 0): ?>
+                                        <span class="small text-secondary">(<?php echo (int) $order['quantity'] - (int) $order['redeemed_free_gallons']; ?> paid + <?php echo (int) $order['redeemed_free_gallons']; ?> free)</span>
+                                    <?php endif; ?>
+                                </div>
                         </div>
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Payment</div>
-                                <div class="fw-semibold"><?php echo ucfirst(str_replace('_', ' ', $order['payment_status'])); ?></div>
+                                <div class="fw-semibold"><?php echo strtoupper(str_replace('_', ' ', $order['payment_method'] ?? 'cod')); ?></div>
+                                <div class="small text-secondary"><?php echo ucfirst(str_replace('_', ' ', $order['payment_status'])); ?></div>
                         </div>
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Total Amount</div>

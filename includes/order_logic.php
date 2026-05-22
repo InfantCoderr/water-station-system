@@ -18,8 +18,189 @@ function ensure_loyalty_record($conn, $customer_id) {
     $stmt->close();
 }
 
+function ensure_free_gallon_redemption_usage_column($conn) {
+    $column = $conn->query("SHOW COLUMNS FROM free_gallon_redemptions LIKE 'used_order_id'");
+    if ($column && $column->num_rows > 0) {
+        return;
+    }
+
+    $conn->query("ALTER TABLE free_gallon_redemptions ADD COLUMN used_order_id INT(11) NULL DEFAULT NULL AFTER order_id");
+    if ($conn->error) {
+        error_log('Failed to add used_order_id to free_gallon_redemptions: ' . $conn->error);
+    }
+}
+
+function expire_free_gallon_redemptions($conn, $customer_id = null) {
+    ensure_free_gallon_redemption_usage_column($conn);
+
+    if ($customer_id === null) {
+        $conn->query("UPDATE free_gallon_redemptions SET status = 'expired', used_order_id = NULL WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at <= NOW()");
+        return;
+    }
+
+    $stmt = $conn->prepare("UPDATE free_gallon_redemptions SET status = 'expired', used_order_id = NULL WHERE customer_id = ? AND status = 'active' AND expires_at IS NOT NULL AND expires_at <= NOW()");
+    $stmt->bind_param("i", $customer_id);
+    $stmt->execute();
+    $stmt->close();
+}
+
+function fetch_available_free_gallon_count($conn, $customer_id) {
+    ensure_loyalty_record($conn, $customer_id);
+    expire_free_gallon_redemptions($conn, $customer_id);
+
+    $stmt = $conn->prepare("SELECT COUNT(*) AS count FROM free_gallon_redemptions WHERE customer_id = ? AND status = 'active' AND (expires_at IS NULL OR expires_at > NOW())");
+    $stmt->bind_param("i", $customer_id);
+    $stmt->execute();
+    $count = (int) ($stmt->get_result()->fetch_assoc()['count'] ?? 0);
+    $stmt->close();
+
+    return $count;
+}
+
+function consume_free_gallon_redemption($conn, $customer_id, $order_id, $gallons = 1) {
+    $gallons = max(0, (int) $gallons);
+    if ($gallons < 1) {
+        return 0;
+    }
+
+    ensure_loyalty_record($conn, $customer_id);
+    expire_free_gallon_redemptions($conn, $customer_id);
+
+    $select = $conn->prepare("SELECT redemption_id FROM free_gallon_redemptions WHERE customer_id = ? AND status = 'active' AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY redeemed_at ASC, redemption_id ASC LIMIT 1 FOR UPDATE");
+    $update = $conn->prepare("UPDATE free_gallon_redemptions SET status = 'used', used_order_id = ? WHERE redemption_id = ?");
+
+    $consumed = 0;
+    for ($index = 0; $index < $gallons; $index++) {
+        $select->bind_param("i", $customer_id);
+        $select->execute();
+        $reward = $select->get_result()->fetch_assoc();
+        if (!$reward) {
+            $select->close();
+            $update->close();
+            throw new Exception("You do not have an available free gallon to redeem.");
+        }
+
+        $redemption_id = (int) $reward['redemption_id'];
+        $update->bind_param("ii", $order_id, $redemption_id);
+        $update->execute();
+        $consumed++;
+    }
+
+    $select->close();
+    $update->close();
+
+    $stmt = $conn->prepare("UPDATE loyalty SET free_gallons_used = free_gallons_used + ? WHERE customer_id = ?");
+    $stmt->bind_param("ii", $consumed, $customer_id);
+    $stmt->execute();
+    $stmt->close();
+
+    return $consumed;
+}
+
+function restore_free_gallon_redemptions_for_order($conn, $order_id) {
+    ensure_free_gallon_redemption_usage_column($conn);
+
+    $stmt = $conn->prepare("SELECT redemption_id, customer_id FROM free_gallon_redemptions WHERE used_order_id = ? AND status = 'used' FOR UPDATE");
+    $stmt->bind_param("i", $order_id);
+    $stmt->execute();
+    $rewards = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (!$rewards) {
+        return 0;
+    }
+
+    $restore = $conn->prepare("UPDATE free_gallon_redemptions SET status = 'active', used_order_id = NULL WHERE redemption_id = ?");
+    $customer_restore_counts = [];
+
+    foreach ($rewards as $reward) {
+        $redemption_id = (int) $reward['redemption_id'];
+        $customer_id = (int) $reward['customer_id'];
+        $restore->bind_param("i", $redemption_id);
+        $restore->execute();
+        $customer_restore_counts[$customer_id] = ($customer_restore_counts[$customer_id] ?? 0) + 1;
+    }
+
+    $restore->close();
+
+    $loyalty = $conn->prepare("UPDATE loyalty SET free_gallons_used = GREATEST(free_gallons_used - ?, 0) WHERE customer_id = ?");
+    foreach ($customer_restore_counts as $customer_id => $count) {
+        ensure_loyalty_record($conn, (int) $customer_id);
+        $loyalty->bind_param("ii", $count, $customer_id);
+        $loyalty->execute();
+    }
+    $loyalty->close();
+
+    return count($rewards);
+}
+
+function max_customer_order_units() {
+    if (function_exists('delivery_batch_capacity_limit_units')) {
+        return delivery_batch_capacity_limit_units();
+    }
+
+    return 16;
+}
+
+function max_order_quantity_for_capacity_units($capacity_units) {
+    $capacity_units = max(1, (int) $capacity_units);
+    return max(1, (int) floor(max_customer_order_units() / $capacity_units));
+}
+
+function max_order_quantity_for_item($item) {
+    return max_order_quantity_for_capacity_units((int) ($item['capacity_units'] ?? 1));
+}
+
+function item_allows_free_gallon_redemption($item) {
+    $item_name = strtolower((string) ($item['item_name'] ?? ''));
+    return strpos($item_name, 'slim') !== false;
+}
+
+function validate_customer_order_limit($item, $paid_quantity, $free_quantity = 0) {
+    $paid_quantity = max(0, (int) $paid_quantity);
+    $free_quantity = max(0, (int) $free_quantity);
+    $capacity_units = max(1, (int) ($item['capacity_units'] ?? 1));
+    $max_quantity = max_order_quantity_for_capacity_units($capacity_units);
+    $total_quantity = $paid_quantity + $free_quantity;
+
+    if ($paid_quantity < 1) {
+        throw new Exception("Order must include at least 1 paid gallon.");
+    }
+
+    if ($free_quantity > 0 && !item_allows_free_gallon_redemption($item)) {
+        throw new Exception("Free gallon rewards can only be redeemed for slim containers.");
+    }
+
+    if ($total_quantity > $max_quantity) {
+        $paid_limit_with_reward = max(0, $max_quantity - $free_quantity);
+        if ($free_quantity > 0) {
+            throw new Exception("This item allows only {$max_quantity} gallon(s) per order. With {$free_quantity} free gallon(s) redeemed, you can pay for up to {$paid_limit_with_reward} gallon(s).");
+        }
+
+        throw new Exception("This item allows only {$max_quantity} gallon(s) per order.");
+    }
+}
+
+function ensure_delivery_cancelled_status($conn) {
+    $column = $conn->query("SHOW COLUMNS FROM deliveries LIKE 'delivery_status'");
+    if (!$column || $column->num_rows < 1) {
+        return;
+    }
+
+    $definition = $column->fetch_assoc();
+    $type = (string) ($definition['Type'] ?? '');
+    if (strpos($type, "'cancelled'") !== false) {
+        return;
+    }
+
+    $conn->query("ALTER TABLE deliveries MODIFY delivery_status ENUM('assigned','in_transit','delivered','failed','returned','cancelled') DEFAULT 'assigned'");
+    if ($conn->error) {
+        error_log('Failed to add cancelled delivery status: ' . $conn->error);
+    }
+}
+
 function fetch_order_state_for_update($conn, $order_id) {
-    $stmt = $conn->prepare("SELECT o.order_id, o.customer_id, o.order_status, d.delivery_id, d.staff_id, d.delivery_status, d.picked_up_at, d.delivered_at FROM orders o LEFT JOIN deliveries d ON d.order_id = o.order_id WHERE o.order_id = ? FOR UPDATE");
+    $stmt = $conn->prepare("SELECT o.order_id, o.customer_id, o.order_status, d.delivery_id, d.staff_id, d.delivery_status, d.delivered_at FROM orders o LEFT JOIN deliveries d ON d.order_id = o.order_id WHERE o.order_id = ? FOR UPDATE");
     $stmt->bind_param("i", $order_id);
     $stmt->execute();
     $state = $stmt->get_result()->fetch_assoc();
@@ -92,7 +273,7 @@ function return_order_stock($conn, $order_id) {
 }
 
 function reserve_inventory_stock($conn, $inventory_id, $quantity) {
-    $stmt = $conn->prepare("SELECT inventory_id, item_name, unit_price, stock_quantity, status FROM inventory WHERE inventory_id = ? FOR UPDATE");
+    $stmt = $conn->prepare("SELECT inventory_id, item_name, unit_price, stock_quantity, status, capacity_units FROM inventory WHERE inventory_id = ? FOR UPDATE");
     $stmt->bind_param("i", $inventory_id);
     $stmt->execute();
     $item = $stmt->get_result()->fetch_assoc();
@@ -117,15 +298,7 @@ function reserve_inventory_stock($conn, $inventory_id, $quantity) {
     return $item;
 }
 
-function find_best_available_staff($conn) {
-    $result = $conn->query("SELECT u.user_id, SUM(CASE WHEN d.delivery_status IN ('assigned', 'picked_up', 'in_transit') THEN 1 ELSE 0 END) AS active_deliveries FROM users u LEFT JOIN deliveries d ON d.staff_id = u.user_id WHERE u.role = 'staff' AND u.status = 'active' GROUP BY u.user_id ORDER BY active_deliveries ASC, u.user_id ASC LIMIT 1");
-    if (!$result || $result->num_rows === 0) {
-        return null;
-    }
-    return $result->fetch_assoc();
-}
-
-function assign_order_to_staff($conn, $order_id, $staff_id, $assigned_by = null, $assignment_type = 'manual') {
+function assign_order_to_staff($conn, $order_id, $staff_id, $assigned_by = null) {
     $stmt = $conn->prepare("SELECT user_id FROM users WHERE user_id = ? AND role = 'staff' AND status = 'active' LIMIT 1");
     $stmt->bind_param("i", $staff_id);
     $stmt->execute();
@@ -145,40 +318,48 @@ function assign_order_to_staff($conn, $order_id, $staff_id, $assigned_by = null,
 
     if ($state['delivery_id']) {
         if ($assigned_by === null) {
-            $stmt = $conn->prepare("UPDATE deliveries SET staff_id = ?, assigned_by = NULL, assignment_type = ?, assigned_at = NOW(), picked_up_at = NULL, delivered_at = NULL, delivery_status = 'assigned', proof_of_delivery = NULL WHERE delivery_id = ?");
-            $stmt->bind_param("isi", $staff_id, $assignment_type, $state['delivery_id']);
+            $stmt = $conn->prepare("UPDATE deliveries SET staff_id = ?, assigned_by = NULL, assigned_at = NOW(), delivered_at = NULL, delivery_status = 'assigned', proof_of_delivery = NULL WHERE delivery_id = ?");
+            $stmt->bind_param("ii", $staff_id, $state['delivery_id']);
         } else {
-            $stmt = $conn->prepare("UPDATE deliveries SET staff_id = ?, assigned_by = ?, assignment_type = ?, assigned_at = NOW(), picked_up_at = NULL, delivered_at = NULL, delivery_status = 'assigned', proof_of_delivery = NULL WHERE delivery_id = ?");
-            $stmt->bind_param("iisi", $staff_id, $assigned_by, $assignment_type, $state['delivery_id']);
+            $stmt = $conn->prepare("UPDATE deliveries SET staff_id = ?, assigned_by = ?, assigned_at = NOW(), delivered_at = NULL, delivery_status = 'assigned', proof_of_delivery = NULL WHERE delivery_id = ?");
+            $stmt->bind_param("iii", $staff_id, $assigned_by, $state['delivery_id']);
         }
     } else {
         if ($assigned_by === null) {
-            $stmt = $conn->prepare("INSERT INTO deliveries (order_id, staff_id, assignment_type, delivery_status) VALUES (?, ?, ?, 'assigned')");
-            $stmt->bind_param("iis", $order_id, $staff_id, $assignment_type);
+            $stmt = $conn->prepare("INSERT INTO deliveries (order_id, staff_id, delivery_status) VALUES (?, ?, 'assigned')");
+            $stmt->bind_param("ii", $order_id, $staff_id);
         } else {
-            $stmt = $conn->prepare("INSERT INTO deliveries (order_id, staff_id, assigned_by, assignment_type, delivery_status) VALUES (?, ?, ?, ?, 'assigned')");
-            $stmt->bind_param("iiis", $order_id, $staff_id, $assigned_by, $assignment_type);
+            $stmt = $conn->prepare("INSERT INTO deliveries (order_id, staff_id, assigned_by, delivery_status) VALUES (?, ?, ?, 'assigned')");
+            $stmt->bind_param("iii", $order_id, $staff_id, $assigned_by);
         }
     }
     $stmt->execute();
     $stmt->close();
 
-    $stmt = $conn->prepare("UPDATE orders SET order_status = 'confirmed' WHERE order_id = ?");
+    $stmt = $conn->prepare("UPDATE orders SET order_status = 'confirmed', payment_status = 'pending' WHERE order_id = ?");
     $stmt->bind_param("i", $order_id);
     $stmt->execute();
     $stmt->close();
 }
 
-function auto_assign_order_to_staff($conn, $order_id) {
-    $staff = find_best_available_staff($conn);
-    if (!$staff) {
-        return null;
+function log_order_activity($conn, $user_id, $action, $description, $order_id) {
+    $stmt = $conn->prepare("
+        INSERT INTO activity_logs (user_id, action, description, related_table, related_id, ip_address)
+        VALUES (?, ?, ?, 'orders', ?, ?)
+    ");
+    if (!$stmt) {
+        return;
     }
-    assign_order_to_staff($conn, $order_id, (int) $staff['user_id'], null, 'automatic');
-    return (int) $staff['user_id'];
+
+    $user_id = $user_id ? (int) $user_id : null;
+    $order_id = (int) $order_id;
+    $ip_address = $_SERVER['REMOTE_ADDR'] ?? null;
+    $stmt->bind_param("issis", $user_id, $action, $description, $order_id, $ip_address);
+    $stmt->execute();
+    $stmt->close();
 }
 
-function transition_order_status($conn, $order_id, $new_status) {
+function transition_order_status($conn, $order_id, $new_status, $actor_id = null, $actor_label = 'system') {
     $allowed_statuses = ['pending', 'confirmed', 'processing', 'out_for_delivery', 'delivered', 'cancelled'];
     if (!in_array($new_status, $allowed_statuses, true)) {
         throw new Exception("Invalid order status.");
@@ -191,7 +372,7 @@ function transition_order_status($conn, $order_id, $new_status) {
 
     $previous_order_status = $state['order_status'];
     $previous_delivery_status = $state['delivery_status'];
-    $has_active_delivery = $state['delivery_id'] && !in_array($previous_delivery_status, ['failed', 'returned', 'delivered'], true);
+    $has_active_delivery = $state['delivery_id'] && !in_array($previous_delivery_status, ['failed', 'returned', 'delivered', 'cancelled'], true);
 
     if (in_array($previous_order_status, ['delivered', 'cancelled', 'returned'], true) && $previous_order_status !== $new_status) {
         throw new Exception("This order is already final and cannot be changed.");
@@ -202,7 +383,7 @@ function transition_order_status($conn, $order_id, $new_status) {
             if ($has_active_delivery) {
                 throw new Exception("Active deliveries must be reassigned or cancelled first.");
             }
-            $stmt = $conn->prepare("UPDATE orders SET order_status = 'pending' WHERE order_id = ?");
+            $stmt = $conn->prepare("UPDATE orders SET order_status = 'pending', payment_status = 'pending' WHERE order_id = ?");
             $stmt->bind_param("i", $order_id);
             $stmt->execute();
             $stmt->close();
@@ -210,12 +391,12 @@ function transition_order_status($conn, $order_id, $new_status) {
 
         case 'confirmed':
         case 'processing':
-            $stmt = $conn->prepare("UPDATE orders SET order_status = ? WHERE order_id = ?");
+            $stmt = $conn->prepare("UPDATE orders SET order_status = ?, payment_status = 'pending' WHERE order_id = ?");
             $stmt->bind_param("si", $new_status, $order_id);
             $stmt->execute();
             $stmt->close();
-            if ($state['delivery_id']) {
-                $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'assigned', picked_up_at = NULL WHERE delivery_id = ?");
+            if ($state['delivery_id'] && !in_array($previous_delivery_status, ['failed', 'returned', 'delivered', 'cancelled'], true)) {
+                $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'assigned' WHERE delivery_id = ?");
                 $stmt->bind_param("i", $state['delivery_id']);
                 $stmt->execute();
                 $stmt->close();
@@ -226,14 +407,14 @@ function transition_order_status($conn, $order_id, $new_status) {
             if (!$state['delivery_id']) {
                 throw new Exception("Assign a staff member before marking this order out for delivery.");
             }
-            if (in_array($previous_delivery_status, ['failed', 'returned'], true)) {
+            if (in_array($previous_delivery_status, ['failed', 'returned', 'cancelled'], true)) {
                 throw new Exception("Reassign this order before marking it out for delivery.");
             }
-            $stmt = $conn->prepare("UPDATE orders SET order_status = 'out_for_delivery' WHERE order_id = ?");
+            $stmt = $conn->prepare("UPDATE orders SET order_status = 'out_for_delivery', payment_status = 'pending' WHERE order_id = ?");
             $stmt->bind_param("i", $order_id);
             $stmt->execute();
             $stmt->close();
-            $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'in_transit', picked_up_at = COALESCE(picked_up_at, NOW()) WHERE delivery_id = ?");
+            $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'in_transit' WHERE delivery_id = ?");
             $stmt->bind_param("i", $state['delivery_id']);
             $stmt->execute();
             $stmt->close();
@@ -243,7 +424,7 @@ function transition_order_status($conn, $order_id, $new_status) {
             if ($previous_order_status === 'cancelled') {
                 throw new Exception("Cancelled orders cannot be marked as delivered.");
             }
-            $stmt = $conn->prepare("UPDATE orders SET order_status = 'delivered' WHERE order_id = ?");
+            $stmt = $conn->prepare("UPDATE orders SET order_status = 'delivered', payment_status = 'paid' WHERE order_id = ?");
             $stmt->bind_param("i", $order_id);
             $stmt->execute();
             $stmt->close();
@@ -262,21 +443,31 @@ function transition_order_status($conn, $order_id, $new_status) {
             if ($previous_order_status === 'delivered') {
                 throw new Exception("Delivered orders cannot be cancelled.");
             }
-            $stmt = $conn->prepare("UPDATE orders SET order_status = 'cancelled' WHERE order_id = ?");
+            $label = strtolower(trim((string) $actor_label));
+            if ($label === '') {
+                $label = 'system';
+            }
+            $cancel_description = 'Order cancelled by ' . $label . '.';
+
+            $stmt = $conn->prepare("UPDATE orders SET order_status = 'cancelled', payment_status = 'pending' WHERE order_id = ?");
             $stmt->bind_param("i", $order_id);
             $stmt->execute();
             $stmt->close();
-            if ($state['delivery_id'] && !in_array($previous_delivery_status, ['delivered', 'returned'], true)) {
-                $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'returned' WHERE delivery_id = ?");
-                $stmt->bind_param("i", $state['delivery_id']);
+            if ($state['delivery_id'] && !in_array($previous_delivery_status, ['delivered', 'cancelled'], true)) {
+                $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'cancelled', delivery_notes = COALESCE(NULLIF(delivery_notes, ''), ?), delivered_at = NULL WHERE delivery_id = ?");
+                $stmt->bind_param("si", $cancel_description, $state['delivery_id']);
                 $stmt->execute();
                 $stmt->close();
             }
             if ($previous_order_status !== 'cancelled') {
                 return_order_stock($conn, $order_id);
-                if (in_array($previous_order_status, ['confirmed', 'processing', 'out_for_delivery'], true) || in_array($previous_delivery_status, ['assigned', 'picked_up', 'in_transit'], true)) {
+                restore_free_gallon_redemptions_for_order($conn, $order_id);
+                if (in_array($previous_order_status, ['confirmed', 'processing', 'out_for_delivery'], true) || in_array($previous_delivery_status, ['assigned', 'in_transit'], true)) {
                     reset_loyalty_progress($conn, (int) $state['customer_id']);
                 }
+            }
+            if ($previous_order_status !== 'cancelled') {
+                log_order_activity($conn, $actor_id, 'order_cancelled', $cancel_description, $order_id);
             }
             break;
     }
@@ -291,7 +482,7 @@ function mark_delivery_as_delivered($conn, $delivery_id, $staff_id) {
     if (!$delivery) {
         throw new Exception("Delivery not found.");
     }
-    if (in_array($delivery['delivery_status'], ['delivered', 'failed', 'returned'], true)) {
+    if (in_array($delivery['delivery_status'], ['delivered', 'failed', 'returned', 'cancelled'], true)) {
         throw new Exception("This delivery is already closed.");
     }
 
@@ -300,7 +491,7 @@ function mark_delivery_as_delivered($conn, $delivery_id, $staff_id) {
     $stmt->execute();
     $stmt->close();
 
-    $stmt = $conn->prepare("UPDATE orders SET order_status = 'delivered' WHERE order_id = ?");
+    $stmt = $conn->prepare("UPDATE orders SET order_status = 'delivered', payment_status = 'paid' WHERE order_id = ?");
     $stmt->bind_param("i", $delivery['order_id']);
     $stmt->execute();
     $stmt->close();
@@ -321,7 +512,7 @@ function mark_delivery_as_failed($conn, $delivery_id, $staff_id, $reason) {
     if (!$delivery) {
         throw new Exception("Delivery not found.");
     }
-    if (in_array($delivery['delivery_status'], ['delivered', 'failed', 'returned'], true)) {
+    if (in_array($delivery['delivery_status'], ['delivered', 'failed', 'returned', 'cancelled'], true)) {
         throw new Exception("This delivery is already closed.");
     }
 
@@ -330,7 +521,33 @@ function mark_delivery_as_failed($conn, $delivery_id, $staff_id, $reason) {
     $stmt->execute();
     $stmt->close();
 
-    $stmt = $conn->prepare("UPDATE orders SET order_status = 'pending' WHERE order_id = ?");
+    $stmt = $conn->prepare("UPDATE orders SET order_status = 'pending', payment_status = 'pending' WHERE order_id = ?");
+    $stmt->bind_param("i", $delivery['order_id']);
+    $stmt->execute();
+    $stmt->close();
+
+    return (int) $delivery['order_id'];
+}
+
+function mark_delivery_as_returned($conn, $delivery_id, $staff_id, $reason) {
+    $stmt = $conn->prepare("SELECT d.delivery_id, d.order_id, d.delivery_status FROM deliveries d JOIN orders o ON o.order_id = d.order_id WHERE d.delivery_id = ? AND d.staff_id = ? FOR UPDATE");
+    $stmt->bind_param("ii", $delivery_id, $staff_id);
+    $stmt->execute();
+    $delivery = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if (!$delivery) {
+        throw new Exception("Delivery not found.");
+    }
+    if (in_array($delivery['delivery_status'], ['delivered', 'failed', 'returned', 'cancelled'], true)) {
+        throw new Exception("This delivery is already closed.");
+    }
+
+    $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'returned', delivery_notes = ?, delivered_at = NULL WHERE delivery_id = ?");
+    $stmt->bind_param("si", $reason, $delivery_id);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $conn->prepare("UPDATE orders SET order_status = 'pending', payment_status = 'pending' WHERE order_id = ?");
     $stmt->bind_param("i", $delivery['order_id']);
     $stmt->execute();
     $stmt->close();

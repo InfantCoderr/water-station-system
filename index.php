@@ -101,9 +101,9 @@ if (isset($_SESSION['login_success'])) {
 </head>
 <body class="bg-info-subtle">
     <main class="container py-4 py-lg-5">
-        <section class="card border-0 shadow-lg overflow-hidden">
+        <section class="card border-0 shadow-lg overflow-hidden mx-auto" style="max-width: 640px;">
             <div class="row g-0">
-                <section class="col-lg-5 bg-primary text-white p-4 p-lg-5 d-flex align-items-center">
+                <section class="col-12 bg-primary text-white p-4 p-lg-5 d-flex align-items-center">
                     <div class="w-100">
                         <div class="mb-4">
                             <span class="badge text-bg-light text-primary mb-3">ISRAPHIL</span>
@@ -145,54 +145,6 @@ if (isset($_SESSION['login_success'])) {
                                 <div class="border-top pt-3 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-2">
                                     <span class="text-secondary">New customer?</span>
                                     <a class="fw-semibold text-decoration-none" href="register.php">Create an account</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="col-lg-7 bg-light p-4 p-lg-5">
-                    <div class="mb-4">
-                        <span class="badge text-bg-info mb-3">About Us</span>
-                        <h2 class="fw-bold text-primary mb-3">Fresh water and reliable service.</h2>
-                        <p class="text-secondary">ISRAPHIL Water Station supports homes and businesses with water refilling and delivery, backed by a simple system that keeps service organized.</p>
-                    </div>
-
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <article class="card h-100 border-info-subtle">
-                                <div class="card-body">
-                                    <span class="badge text-bg-light text-primary mb-2">Brand</span>
-                                    <h3 class="h5 fw-bold">The brand</h3>
-                                    <p class="text-secondary mb-0">Built around trust, cleanliness, reliability, and everyday convenience.</p>
-                                </div>
-                            </article>
-                        </div>
-                        <div class="col-md-6">
-                            <article class="card h-100 border-info-subtle">
-                                <div class="card-body">
-                                    <span class="badge text-bg-light text-primary mb-2">Station</span>
-                                    <h3 class="h5 fw-bold">The station</h3>
-                                    <p class="text-secondary mb-0">An organized workflow for tracking orders, coordinating deliveries, and serving repeat customers.</p>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
-
-                    <div class="card border-warning-subtle">
-                        <div class="row g-0 align-items-center">
-                            <div class="col-md-5 p-3">
-                                <img class="img-fluid rounded" src="image.gif/water.png" alt="Water station illustration">
-                            </div>
-                            <div class="col-md-7">
-                                <div class="card-body">
-                                    <span class="badge text-bg-info mb-3">What We Offer</span>
-                                    <h3 class="h4 fw-bold mb-3">Water service with a cleaner online experience.</h3>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0">Purified water refilling for homes and small businesses</li>
-                                        <li class="list-group-item px-0">Delivery support and customer account access</li>
-                                        <li class="list-group-item px-0">Dedicated dashboards for admin, staff, and customers</li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>

@@ -6,12 +6,7 @@
     min-width: 0;
 }
 
-.customer-welcome {
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
-
-.customer-menu-button {
+.customer-account-menu .customer-menu-button {
     min-height: 2.5rem;
     padding: 0.45rem 0.85rem;
     display: inline-flex;
@@ -19,20 +14,21 @@
     justify-content: center;
     gap: 0.45rem;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: #fff;
     color: #0d6efd;
     font-weight: 700;
-    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.14);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.16);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
-.customer-menu-button:hover,
-.customer-menu-button:focus {
+.customer-account-menu .customer-menu-button:hover,
+.customer-account-menu .customer-menu-button:focus {
     color: #0a58ca;
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.18);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
-.customer-menu-button:active {
+.customer-account-menu .customer-menu-button:active {
     transform: translateY(1px);
 }
 
@@ -45,25 +41,15 @@
     line-height: 1;
 }
 
-.customer-topbar-actions .dropdown-menu {
-    min-width: 11.5rem;
-    padding: 0.45rem;
+.customer-account-dropdown {
+    min-width: 12rem;
+    padding: 0.5rem;
     border: 0;
-    border-radius: 0.75rem;
-    box-shadow: 0 1rem 2rem rgba(13, 38, 76, 0.18);
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2rem rgba(13, 38, 76, 0.2);
 }
 
-.customer-topbar-actions .dropdown-item {
-    border-radius: 0.55rem;
-    padding: 0.55rem 0.75rem;
-    font-weight: 600;
-}
-
-.customer-topbar-actions .dropdown-item.active {
-    background-color: #0d6efd;
-}
-
-.customer-topbar-actions .dropdown-header {
+.customer-account-dropdown .dropdown-header {
     padding: 0.35rem 0.75rem 0.25rem;
     color: #6c757d;
     font-size: 0.72rem;
@@ -72,17 +58,20 @@
     text-transform: uppercase;
 }
 
-.customer-topbar-actions .dropdown-item.text-danger:hover,
-.customer-topbar-actions .dropdown-item.text-danger:focus {
-    background-color: #f8d7da;
-    color: #842029 !important;
+.customer-account-dropdown .dropdown-item {
+    border-radius: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    font-weight: 600;
 }
 
-.delete-address-progress {
-    border: 1px solid rgba(220, 53, 69, 0.18);
-    border-radius: 0.75rem;
-    background: #fff8f8;
-    padding: 0.85rem;
+.customer-account-dropdown .dropdown-item.active {
+    background-color: #0d6efd;
+}
+
+.customer-account-dropdown .dropdown-item.text-danger:hover,
+.customer-account-dropdown .dropdown-item.text-danger:focus {
+    background-color: #f8d7da;
+    color: #842029 !important;
 }
 
 @media (max-width: 575.98px) {

@@ -54,12 +54,16 @@ $assigned_batch_items = fetch_delivery_assigned_batch_items_map($conn);
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="../../style/admin/admin_compact.css?v=20260512b" rel="stylesheet">
+    <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
 </head>
 <body class="bg-light">
     <div class="container-fluid p-0">
         <div class="row g-0">
-        <aside class="admin-floating-sidebar col-lg-3 col-xl-2 text-white bg-israphil-sidebar d-flex flex-column p-3 min-vh-100">
+        <aside class="admin-floating-sidebar offcanvas-lg offcanvas-start col-lg-3 col-xl-2 text-white bg-israphil-sidebar d-flex flex-column p-3 min-vh-100" tabindex="-1" id="adminSidebar" aria-labelledby="adminSidebarLabel">
+            <div class="d-flex d-lg-none justify-content-between align-items-center mb-2">
+                <span class="fw-semibold" id="adminSidebarLabel">Admin Menu</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar" aria-label="Close menu"></button>
+            </div>
             <a href="dashboard.php" class="d-flex align-items-center gap-2 text-white text-decoration-none fs-4 mb-3">
                 <span class="bg-white rounded d-inline-flex align-items-center justify-content-center p-1">
                     <img src="../../image.gif/favicon.png" alt="ISRAPHIL logo" width="32" height="32">
@@ -131,9 +135,14 @@ $assigned_batch_items = fetch_delivery_assigned_batch_items_map($conn);
 
         <div class="admin-floating-content col-lg-9 col-xl-10 min-vh-100">
             <nav class="navbar bg-white border-bottom shadow-sm px-3 px-lg-4">
-                <div>
-                    <span class="navbar-brand mb-0 h1 fw-bold text-primary">Batch Assignment</span>
-                    <div class="small text-secondary">Send confirmed batches to active riders.</div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-primary d-lg-none admin-mobile-menu-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-label="Open admin menu">
+                        <i class="bi bi-list" aria-hidden="true"></i>
+                    </button>
+                    <div>
+                        <span class="navbar-brand mb-0 h1 fw-bold text-primary">Batch Assignment</span>
+                        <div class="small text-secondary">Send confirmed batches to active riders.</div>
+                    </div>
                 </div>
             </nav>
 

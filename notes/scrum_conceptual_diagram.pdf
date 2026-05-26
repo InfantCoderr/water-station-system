@@ -1,0 +1,173 @@
+%PDF-1.4
+%PDF
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 9582 >>
+stream
+q 0.985 0.995 1.000 rg 0 0 842 595 re f Q
+BT 0.030 0.170 0.270 rg /F2 17.0 Tf 38.0 562.0 Td (Conceptual Diagram: Scrum Methodology for the ISRAPHIL Water Station System) Tj ET
+BT 0.250 0.340 0.400 rg /F1 9.5 Tf 39.0 543.0 Td (Iterative development from business needs to working system increments) Tj ET
+q 0.900 0.960 0.990 rg 35.0 485.0 165.0 42.0 re f Q
+q 0.090 0.350 0.550 RG 1.2 w 35.0 485.0 165.0 42.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 45.0 509.0 Td (Product Owner) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 493.0 Td (Prioritizes water station needs) Tj ET
+q 0.900 0.960 0.990 rg 230.0 485.0 165.0 42.0 re f Q
+q 0.090 0.350 0.550 RG 1.2 w 230.0 485.0 165.0 42.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 240.0 509.0 Td (Scrum Master) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 240.0 493.0 Td (Guides Scrum process) Tj ET
+q 0.900 0.960 0.990 rg 425.0 485.0 165.0 42.0 re f Q
+q 0.090 0.350 0.550 RG 1.2 w 425.0 485.0 165.0 42.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 435.0 509.0 Td (Development Team) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 435.0 493.0 Td (Builds and tests modules) Tj ET
+q 0.900 0.960 0.990 rg 620.0 485.0 185.0 42.0 re f Q
+q 0.090 0.350 0.550 RG 1.2 w 620.0 485.0 185.0 42.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 630.0 509.0 Td (System Users) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 630.0 493.0 Td (Admin, Staff, Customer feedback) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 117.0 485.0 m 132.0 438.0 l S Q
+q 0.180 0.320 0.420 rg 132.0 438.0 m 133.8 444.8 l 126.6 442.5 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 312.0 485.0 m 336.0 438.0 l S Q
+q 0.180 0.320 0.420 rg 336.0 438.0 m 336.7 445.0 l 330.0 441.6 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 507.0 485.0 m 540.0 438.0 l S Q
+q 0.180 0.320 0.420 rg 540.0 438.0 m 539.7 445.0 l 533.5 440.7 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 712.0 485.0 m 665.0 438.0 l S Q
+q 0.180 0.320 0.420 rg 665.0 438.0 m 671.8 439.5 l 666.5 444.8 l h f Q
+q 1.000 0.980 0.910 rg 45.0 315.0 205.0 123.0 re f Q
+q 0.680 0.490 0.120 RG 1.2 w 45.0 315.0 205.0 123.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 55.0 420.0 Td (Product Backlog) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 404.0 Td (- Authentication and roles) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 393.0 Td (- Customer ordering) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 382.0 Td (- Inventory management) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 371.0 Td (- Admin order processing) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 360.0 Td (- Staff delivery tracking) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 55.0 349.0 Td (- Batches, exceptions, reports) Tj ET
+q 0.940 0.980 0.940 rg 308.0 394.0 138.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 308.0 394.0 138.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 318.0 420.0 Td (Sprint Planning) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 318.0 404.0 Td (Select highest priority) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 318.0 393.0 Td (tasks) Tj ET
+q 0.940 0.980 0.940 rg 485.0 394.0 138.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 485.0 394.0 138.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 495.0 420.0 Td (Sprint Backlog) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 495.0 404.0 Td (Tasks chosen for the sprint) Tj ET
+q 0.940 0.980 0.940 rg 662.0 394.0 130.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 662.0 394.0 130.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 672.0 420.0 Td (Sprint Work) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 672.0 404.0 Td (Design, code, and test) Tj ET
+q 0.940 0.980 0.940 rg 662.0 318.0 130.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 662.0 318.0 130.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 672.0 344.0 Td (Daily Scrum) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 672.0 328.0 Td (Check progress and) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 672.0 317.0 Td (blockers) Tj ET
+q 0.940 0.980 0.940 rg 485.0 318.0 138.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 485.0 318.0 138.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 495.0 344.0 Td (Sprint Review) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 495.0 328.0 Td (Demonstrate completed) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 495.0 317.0 Td (module) Tj ET
+q 0.940 0.980 0.940 rg 308.0 318.0 138.0 44.0 re f Q
+q 0.180 0.480 0.250 RG 1.2 w 308.0 318.0 138.0 44.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 318.0 344.0 Td (Retrospective) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 318.0 328.0 Td (Improve next sprint) Tj ET
+q 0.910 0.950 1.000 rg 485.0 253.0 138.0 42.0 re f Q
+q 0.180 0.350 0.650 RG 1.2 w 485.0 253.0 138.0 42.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 495.0 277.0 Td (System Increment) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 495.0 261.0 Td (Working feature added) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 250.0 376.0 m 307.0 416.0 l S Q
+q 0.180 0.320 0.420 rg 307.0 416.0 m 300.0 415.7 l 304.3 409.5 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 446.0 416.0 m 484.0 416.0 l S Q
+q 0.180 0.320 0.420 rg 484.0 416.0 m 478.1 419.8 l 478.1 412.2 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 623.0 416.0 m 661.0 416.0 l S Q
+q 0.180 0.320 0.420 rg 661.0 416.0 m 655.1 419.8 l 655.1 412.2 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 727.0 394.0 m 727.0 363.0 l S Q
+q 0.180 0.320 0.420 rg 727.0 363.0 m 730.8 368.9 l 723.2 368.9 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 662.0 340.0 m 624.0 340.0 l S Q
+q 0.180 0.320 0.420 rg 624.0 340.0 m 629.9 336.2 l 629.9 343.8 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 485.0 340.0 m 447.0 340.0 l S Q
+q 0.180 0.320 0.420 rg 447.0 340.0 m 452.9 336.2 l 452.9 343.8 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 377.0 318.0 m 485.0 276.0 l S Q
+q 0.180 0.320 0.420 rg 485.0 276.0 m 480.9 281.6 l 478.1 274.6 l h f Q
+q 0.180 0.320 0.420 RG 1.3 w 623.0 276.0 m 725.0 318.0 l S Q
+q 0.180 0.320 0.420 rg 725.0 318.0 m 718.1 319.2 l 721.0 312.3 l h f Q
+BT 0.030 0.170 0.270 rg /F2 12.0 Tf 36.0 232.0 Td (Sprint Development Map for the System) Tj ET
+q 0.960 0.980 1.000 rg 35.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 35.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 45.0 194.0 Td (Sprint 1) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 178.0 Td (Foundation) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 167.0 Td (Login, registration,) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 156.0 Td (roles, sessions) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 157.0 177.0 m 176.0 177.0 l S Q
+q 0.180 0.320 0.420 rg 176.0 177.0 m 170.1 180.8 l 170.1 173.2 l h f Q
+q 0.960 0.980 1.000 rg 169.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 169.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 179.0 194.0 Td (Sprint 2) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 179.0 178.0 Td (Ordering + Inventory) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 179.0 167.0 Td (Customer orders and) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 179.0 156.0 Td (stock control) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 291.0 177.0 m 310.0 177.0 l S Q
+q 0.180 0.320 0.420 rg 310.0 177.0 m 304.1 180.8 l 304.1 173.2 l h f Q
+q 0.960 0.980 1.000 rg 303.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 303.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 313.0 194.0 Td (Sprint 3) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 313.0 178.0 Td (Admin Processing) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 313.0 167.0 Td (Orders, status updates,) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 313.0 156.0 Td (staff assignment) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 425.0 177.0 m 444.0 177.0 l S Q
+q 0.180 0.320 0.420 rg 444.0 177.0 m 438.1 180.8 l 438.1 173.2 l h f Q
+q 0.960 0.980 1.000 rg 437.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 437.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 447.0 194.0 Td (Sprint 4) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 447.0 178.0 Td (Staff Delivery) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 447.0 167.0 Td (Assigned deliveries and) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 447.0 156.0 Td (outcomes) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 559.0 177.0 m 578.0 177.0 l S Q
+q 0.180 0.320 0.420 rg 578.0 177.0 m 572.1 180.8 l 572.1 173.2 l h f Q
+q 0.960 0.980 1.000 rg 571.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 571.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 581.0 194.0 Td (Sprint 5) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 581.0 178.0 Td (Monitoring) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 581.0 167.0 Td (Batches, exceptions,) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 581.0 156.0 Td (reports) Tj ET
+q 0.180 0.320 0.420 RG 1.3 w 693.0 177.0 m 712.0 177.0 l S Q
+q 0.180 0.320 0.420 rg 712.0 177.0 m 706.1 180.8 l 706.1 173.2 l h f Q
+q 0.960 0.980 1.000 rg 705.0 142.0 122.0 70.0 re f Q
+q 0.130 0.360 0.520 RG 1.2 w 705.0 142.0 122.0 70.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 715.0 194.0 Td (Sprint 6) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 715.0 178.0 Td (Finalization) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 715.0 167.0 Td (Testing, polishing,) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 715.0 156.0 Td (documentation) Tj ET
+q 1.000 1.000 1.000 rg 35.0 52.0 770.0 58.0 re f Q
+q 0.350 0.450 0.520 RG 1.2 w 35.0 52.0 770.0 58.0 re S Q
+BT 0.050 0.210 0.330 rg /F2 10.5 Tf 45.0 92.0 Td (Conceptual Meaning) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 76.0 Td (Business needs and user feedback are organized into the product backlog. Each sprint selects priority tasks, develops and tests a working module,) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 65.0 Td (reviews the result, and improves the next sprint. This fits the water station system because its modules can be built gradually from access control) Tj ET
+BT 0.120 0.160 0.200 rg /F1 7.8 Tf 45.0 54.0 Td (to ordering, inventory, delivery, reports, and final testing.) Tj ET
+
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000014 00000 n 
+0000000063 00000 n 
+0000000120 00000 n 
+0000000256 00000 n 
+0000000326 00000 n 
+0000000401 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+10035
+%%EOF

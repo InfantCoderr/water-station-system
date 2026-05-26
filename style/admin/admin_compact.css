@@ -2,6 +2,37 @@
     background: linear-gradient(180deg, #062034 0%, #0b2f4a 55%, #0f4c6f 100%);
 }
 
+@media (max-width: 991.98px) {
+    .admin-floating-sidebar.offcanvas-lg {
+        width: min(82vw, 320px);
+        border-right: 0;
+        box-shadow: 0.85rem 0 2rem rgba(6, 32, 52, 0.28);
+    }
+
+    .admin-floating-sidebar .nav-link {
+        min-height: 42px;
+    }
+
+    .admin-mobile-menu-btn {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .admin-mobile-menu-btn .bi {
+        font-size: 1.25rem;
+    }
+
+    .admin-floating-content .navbar-brand {
+        display: block;
+        white-space: normal;
+        line-height: 1.2;
+    }
+}
+
 @media (min-width: 992px) {
     .admin-floating-sidebar {
         position: fixed;

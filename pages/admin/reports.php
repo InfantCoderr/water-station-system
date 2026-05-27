@@ -66,8 +66,8 @@ $delivery_summary = admin_report_single_row($conn, "
 
 $exception_summary = [
     'cancelled_orders' => admin_count_query($conn, "SELECT COUNT(*) AS count FROM orders WHERE order_status = 'cancelled' AND DATE(updated_at) = '" . $conn->real_escape_string($report_date) . "'"),
-    'failed_deliveries' => admin_count_query($conn, "SELECT COUNT(*) AS count FROM deliveries WHERE delivery_status = 'failed' AND DATE(assigned_at) = '" . $conn->real_escape_string($report_date) . "'"),
-    'returned_deliveries' => admin_count_query($conn, "SELECT COUNT(*) AS count FROM deliveries WHERE delivery_status = 'returned' AND DATE(assigned_at) = '" . $conn->real_escape_string($report_date) . "'"),
+    'failed_deliveries' => admin_count_query($conn, "SELECT COUNT(*) AS count FROM deliveries WHERE delivery_status = 'failed' AND DATE(COALESCE(delivered_at, assigned_at)) = '" . $conn->real_escape_string($report_date) . "'"),
+    'returned_deliveries' => admin_count_query($conn, "SELECT COUNT(*) AS count FROM deliveries WHERE delivery_status = 'returned' AND DATE(COALESCE(delivered_at, assigned_at)) = '" . $conn->real_escape_string($report_date) . "'"),
 ];
 
 $today_revenue = (float) admin_scalar_query($conn, "
@@ -125,7 +125,7 @@ $total_exceptions = (int) ($exception_summary['cancelled_orders'] ?? 0)
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
+    <link href="../../style/admin/admin_compact.css?v=20260528f" rel="stylesheet">
     <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
 <body class="bg-light system-loading skeleton-admin skeleton-admin-reports">

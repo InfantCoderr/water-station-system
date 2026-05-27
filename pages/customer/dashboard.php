@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/db_connect.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/order_logic.php';
 require_once __DIR__ . '/../../includes/address_helpers.php';
+require_once __DIR__ . '/../../includes/delivery_batch_helpers.php';
 require_once __DIR__ . '/../../includes/customer_navbar.php';
 
 require_active_session($conn, ['customer'], '../../index.php');
@@ -16,6 +17,9 @@ $success = '';
 $result_modal_title = '';
 $result_modal_message = '';
 $result_modal_variant = 'success';
+$delivery_timezone = new DateTimeZone('Asia/Manila');
+$minimum_delivery_date = new DateTimeImmutable('today', $delivery_timezone);
+$minimum_delivery_date_value = $minimum_delivery_date->format('Y-m-d');
 
 if (empty($_SESSION['order_form_token'])) {
     $_SESSION['order_form_token'] = bin2hex(random_bytes(32));
@@ -160,6 +164,19 @@ function customer_preview_text($text, $limit = 54) {
     return substr($text, 0, $limit) . '...';
 }
 
+function parse_customer_delivery_date($value, DateTimeZone $timezone) {
+    $value = trim((string) $value);
+    $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value, $timezone);
+    $errors = DateTimeImmutable::getLastErrors();
+    $has_errors = is_array($errors) && (($errors['warning_count'] ?? 0) > 0 || ($errors['error_count'] ?? 0) > 0);
+
+    if (!$date || $has_errors || $date->format('Y-m-d') !== $value) {
+        return null;
+    }
+
+    return $date;
+}
+
 // Handle new order
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
     $submitted_order_token = (string) ($_POST['order_form_token'] ?? '');
@@ -182,6 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
     $service_area_id = 0;
     $saved_address_needs_update = false;
     $delivery_date = $_POST['delivery_date'] ?? '';
+    $parsed_delivery_date = parse_customer_delivery_date($delivery_date, $delivery_timezone);
     $contact_number = trim($_POST['contact_number'] ?? '');
     $payment_method = trim((string) ($_POST['payment_method'] ?? 'cod'));
     $notes = trim($_POST['notes'] ?? '');
@@ -241,7 +259,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
         $error = "Please complete the street, province, city, and barangay for the new delivery address.";
     } elseif (empty($error) && $delivery_address_choice === 'new' && !($service_area = find_delivery_service_area($conn, $delivery_province, $delivery_city, $delivery_barangay))) {
         $error = "This delivery address is outside our current coverage. Please choose a listed Pangasinan province, city, and barangay combination.";
-    } elseif (empty($error) && $delivery_date < date('Y-m-d')) {
+    } elseif (empty($error) && !$parsed_delivery_date) {
+        $error = "Please choose a valid delivery date.";
+    } elseif (empty($error) && $parsed_delivery_date < $minimum_delivery_date) {
         $error = "Delivery date cannot be in the past.";
     } elseif (empty($error)) {
         try {
@@ -659,7 +679,7 @@ if ($orders_needed === 5 && $consecutive > 0) {
                                     </div>
                                     <div class="col-md-6">
                                         <label for="delivery_date" class="form-label">Preferred Delivery Date</label>
-                                        <input id="delivery_date" class="form-control form-control-lg" type="date" name="delivery_date" min="<?php echo date('Y-m-d'); ?>" value="<?php echo htmlspecialchars($_POST['delivery_date'] ?? ''); ?>" required>
+                                        <input id="delivery_date" class="form-control form-control-lg" type="date" name="delivery_date" min="<?php echo htmlspecialchars($minimum_delivery_date_value); ?>" value="<?php echo htmlspecialchars($_POST['delivery_date'] ?? ''); ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="contact_number" class="form-label">Contact Number</label>

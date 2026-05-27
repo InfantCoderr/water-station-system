@@ -219,6 +219,10 @@ $current_filter_count = $history_filter_options[$status_filter]['count'] ?? $tot
             <?php if ($orders->num_rows > 0): ?>
                 <div class="d-grid gap-3">
                 <?php while ($order = $orders->fetch_assoc()): ?>
+                <?php
+                    $payment_method = order_payment_method_label($order['payment_method'] ?? 'cash_on_delivery');
+                    $payment_status = order_payment_status_label($order['payment_status'] ?? 'pending');
+                ?>
                 <article class="card border">
                     <div class="card-body p-3 p-md-4">
                         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2 pb-3 mb-3 border-bottom">
@@ -257,8 +261,8 @@ $current_filter_count = $history_filter_options[$status_filter]['count'] ?? $tot
                         </div>
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Payment</div>
-                                <div class="fw-semibold"><?php echo strtoupper(str_replace('_', ' ', $order['payment_method'] ?? 'cod')); ?></div>
-                                <div class="small text-secondary"><?php echo ucfirst(str_replace('_', ' ', $order['payment_status'])); ?></div>
+                                <div class="fw-semibold"><?php echo htmlspecialchars($payment_method); ?></div>
+                                <div class="small text-secondary"><?php echo htmlspecialchars($payment_status); ?></div>
                         </div>
                             <div class="col-6 col-md-3">
                                 <div class="small text-secondary">Total Amount</div>

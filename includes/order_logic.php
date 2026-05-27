@@ -4,6 +4,19 @@ function sanitize_status_filter($value, $allowed, $default = 'all') {
     return in_array($value, $allowed, true) ? $value : $default;
 }
 
+function order_payment_method_label($payment_method) {
+    $payment_method = (string) $payment_method;
+    if ($payment_method === 'cod' || $payment_method === 'cash_on_delivery') {
+        return 'Cash on Delivery';
+    }
+
+    return ucwords(str_replace('_', ' ', $payment_method !== '' ? $payment_method : 'cash_on_delivery'));
+}
+
+function order_payment_status_label($payment_status) {
+    return ucwords(str_replace('_', ' ', (string) ($payment_status !== '' ? $payment_status : 'pending')));
+}
+
 function sync_inventory_status($conn, $inventory_id) {
     $stmt = $conn->prepare("UPDATE inventory SET status = CASE WHEN status = 'discontinued' THEN 'discontinued' WHEN stock_quantity <= 0 THEN 'out_of_stock' ELSE 'available' END WHERE inventory_id = ?");
     $stmt->bind_param("i", $inventory_id);
@@ -424,15 +437,22 @@ function transition_order_status($conn, $order_id, $new_status, $actor_id = null
             if ($previous_order_status === 'cancelled') {
                 throw new Exception("Cancelled orders cannot be marked as delivered.");
             }
+            if (!$state['delivery_id']) {
+                throw new Exception("Assign a delivery before marking this order as delivered.");
+            }
+            if (in_array($previous_delivery_status, ['failed', 'returned', 'cancelled'], true)) {
+                throw new Exception("Reassign this order before marking it as delivered.");
+            }
             $stmt = $conn->prepare("UPDATE orders SET order_status = 'delivered', payment_status = 'paid' WHERE order_id = ?");
             $stmt->bind_param("i", $order_id);
             $stmt->execute();
             $stmt->close();
-            if ($state['delivery_id']) {
-                $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'delivered', delivered_at = COALESCE(delivered_at, NOW()) WHERE delivery_id = ?");
-                $stmt->bind_param("i", $state['delivery_id']);
-                $stmt->execute();
-                $stmt->close();
+            $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'delivered', delivered_at = COALESCE(delivered_at, NOW()) WHERE delivery_id = ?");
+            $stmt->bind_param("i", $state['delivery_id']);
+            $stmt->execute();
+            $stmt->close();
+            if (function_exists('refresh_delivery_batch_completion_for_delivery')) {
+                refresh_delivery_batch_completion_for_delivery($conn, (int) $state['delivery_id']);
             }
             if ($previous_order_status !== 'delivered' && $previous_delivery_status !== 'delivered') {
                 award_loyalty_for_delivery($conn, (int) $state['customer_id'], $order_id);
@@ -458,6 +478,9 @@ function transition_order_status($conn, $order_id, $new_status, $actor_id = null
                 $stmt->bind_param("si", $cancel_description, $state['delivery_id']);
                 $stmt->execute();
                 $stmt->close();
+                if (function_exists('refresh_delivery_batch_completion_for_delivery')) {
+                    refresh_delivery_batch_completion_for_delivery($conn, (int) $state['delivery_id']);
+                }
             }
             if ($previous_order_status !== 'cancelled') {
                 return_order_stock($conn, $order_id);
@@ -516,7 +539,7 @@ function mark_delivery_as_failed($conn, $delivery_id, $staff_id, $reason) {
         throw new Exception("This delivery is already closed.");
     }
 
-    $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'failed', delivery_notes = ?, delivered_at = NULL WHERE delivery_id = ?");
+    $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'failed', delivery_notes = ?, delivered_at = NOW() WHERE delivery_id = ?");
     $stmt->bind_param("si", $reason, $delivery_id);
     $stmt->execute();
     $stmt->close();
@@ -542,7 +565,7 @@ function mark_delivery_as_returned($conn, $delivery_id, $staff_id, $reason) {
         throw new Exception("This delivery is already closed.");
     }
 
-    $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'returned', delivery_notes = ?, delivered_at = NULL WHERE delivery_id = ?");
+    $stmt = $conn->prepare("UPDATE deliveries SET delivery_status = 'returned', delivery_notes = ?, delivered_at = NOW() WHERE delivery_id = ?");
     $stmt->bind_param("si", $reason, $delivery_id);
     $stmt->execute();
     $stmt->close();

@@ -7,6 +7,7 @@ require_once '../../includes/auth.php';
 require_once '../../includes/order_logic.php';
 require_once '../../includes/admin_page_helpers.php';
 require_once '../../includes/admin_order_helpers.php';
+require_once '../../includes/delivery_batch_helpers.php';
 
 /** @var mysqli $conn */
 if (!isset($conn) || !($conn instanceof mysqli)) {
@@ -95,6 +96,7 @@ function admin_exception_rows($conn, $type_filter) {
             END AS remarks,
             o.order_status AS status,
             o.total_amount,
+            o.payment_method,
             o.payment_status,
             d.delivery_status,
             d.delivery_notes,
@@ -131,10 +133,11 @@ function admin_exception_rows($conn, $type_filter) {
             o.order_id,
             c.full_name AS customer_name,
             'Failed Delivery' AS exception_type,
-            COALESCE(d.assigned_at, o.updated_at, o.order_date) AS exception_date,
+            COALESCE(d.delivered_at, d.assigned_at, o.updated_at, o.order_date) AS exception_date,
             CONCAT('Action by: ', COALESCE(staff.full_name, 'Delivery staff')) AS remarks,
             d.delivery_status AS status,
             o.total_amount,
+            o.payment_method,
             o.payment_status,
             d.delivery_status,
             d.delivery_notes,
@@ -152,10 +155,11 @@ function admin_exception_rows($conn, $type_filter) {
             o.order_id,
             c.full_name AS customer_name,
             'Returned Delivery' AS exception_type,
-            COALESCE(d.assigned_at, o.updated_at, o.order_date) AS exception_date,
+            COALESCE(d.delivered_at, d.assigned_at, o.updated_at, o.order_date) AS exception_date,
             CONCAT('Action by: ', COALESCE(staff.full_name, 'Delivery staff')) AS remarks,
             d.delivery_status AS status,
             o.total_amount,
+            o.payment_method,
             o.payment_status,
             d.delivery_status,
             d.delivery_notes,
@@ -205,7 +209,7 @@ $exception_rows = admin_exception_rows($conn, $type_filter);
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
+    <link href="../../style/admin/admin_compact.css?v=20260528f" rel="stylesheet">
     <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
 <body class="bg-light system-loading skeleton-admin skeleton-admin-exceptions">
@@ -356,7 +360,7 @@ $exception_rows = admin_exception_rows($conn, $type_filter);
                                 <p class="text-secondary mb-0">Cancelled orders, failed deliveries, and returned deliveries are tracked here for admin review.</p>
                             </div>
                             <div class="d-flex flex-wrap gap-2 align-items-start">
-                                <a href="orders.php?status=cancelled" class="btn btn-outline-secondary btn-sm">Cancelled Orders</a>
+                                <a href="exceptions.php?type=cancelled" class="btn btn-outline-secondary btn-sm">Cancelled Orders</a>
                                 <a href="order_batches.php" class="btn btn-outline-primary btn-sm">Plan Deliveries</a>
                             </div>
                         </div>
@@ -386,7 +390,9 @@ $exception_rows = admin_exception_rows($conn, $type_filter);
                                             $staff_name = (string) ($exception['staff_name'] ?? 'Unassigned');
                                             $exception_date = admin_format_date($exception['exception_date'] ?? '', 'M d, Y g:i A');
                                             $remarks = (string) ($exception['remarks'] ?? 'Not provided');
-                                            $payment_status = admin_order_status_label($exception['payment_status'] ?? 'pending');
+                                            $payment_method = order_payment_method_label($exception['payment_method'] ?? 'cash_on_delivery');
+                                            $payment_status = order_payment_status_label($exception['payment_status'] ?? 'pending');
+                                            $payment_summary = $payment_method . ' - ' . $payment_status;
                                             $total_amount = number_format((float) ($exception['total_amount'] ?? 0), 2);
                                             $delivery_notes = trim((string) ($exception['delivery_notes'] ?? ''));
                                             $order_status_label = admin_order_status_label($order_status !== '' ? $order_status : $status);
@@ -434,7 +440,7 @@ $exception_rows = admin_exception_rows($conn, $type_filter);
                                                         data-order-status="<?php echo htmlspecialchars($order_status_label, ENT_QUOTES); ?>"
                                                         data-delivery-status="<?php echo htmlspecialchars($delivery_status_label, ENT_QUOTES); ?>"
                                                         data-staff="<?php echo htmlspecialchars($staff_name, ENT_QUOTES); ?>"
-                                                        data-payment="<?php echo htmlspecialchars($payment_status, ENT_QUOTES); ?>"
+                                                        data-payment="<?php echo htmlspecialchars($payment_summary, ENT_QUOTES); ?>"
                                                         data-amount="PHP <?php echo htmlspecialchars($total_amount, ENT_QUOTES); ?>"
                                                         data-delivery-notes="<?php echo htmlspecialchars($delivery_notes !== '' ? $delivery_notes : 'No delivery notes recorded.', ENT_QUOTES); ?>"
                                                     >

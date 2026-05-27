@@ -1428,6 +1428,8 @@ function fetch_staff_delivery_batch_items_map($conn, $staff_id, $statuses = ['as
             o.delivery_address,
             o.contact_number,
             o.total_amount,
+            o.payment_method,
+            o.payment_status,
             o.notes AS order_notes,
             o.order_status,
             c.full_name AS customer_name,

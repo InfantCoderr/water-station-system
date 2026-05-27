@@ -24,6 +24,8 @@ function admin_delivery_queue_rows($conn, $queue_type, $statuses = ['confirmed']
             o.delivery_city,
             o.delivery_province,
             o.total_amount,
+            o.payment_method,
+            o.payment_status,
             c.full_name AS customer_name,
             c.phone AS customer_phone,
             area.zone_code,

@@ -127,7 +127,7 @@ if (in_array($status_filter, ['delivered', 'failed', 'returned', 'cancelled'], t
 // Get assigned deliveries
 $deliveries_query = "
     SELECT d.*, o.order_id, o.customer_id, o.delivery_address, o.contact_number,
-           o.delivery_date, o.total_amount, o.notes as order_notes,
+           o.delivery_date, o.total_amount, o.payment_method, o.payment_status, o.notes as order_notes,
            order_items.item_summary, order_items.total_quantity,
            c.full_name as customer_name, c.phone as customer_phone
     FROM deliveries d
@@ -537,6 +537,8 @@ function staff_excerpt($value, $length = 88) {
                                 $total_quantity = (int) ($batch_order['total_quantity'] ?? 0);
                                 $item_units = (int) ($batch_order['capacity_units'] ?? 0);
                                 $total_amount = (float) ($batch_order['total_amount'] ?? 0);
+                                $payment_method = order_payment_method_label($batch_order['payment_method'] ?? 'cash_on_delivery');
+                                $payment_status = order_payment_status_label($batch_order['payment_status'] ?? 'pending');
                                 $order_notes = trim((string) ($batch_order['order_notes'] ?? ''));
                                 $delivery_notes = trim((string) ($batch_order['delivery_notes'] ?? ''));
                                 $delivered_at = (string) ($batch_order['delivered_at'] ?? '');
@@ -578,7 +580,7 @@ function staff_excerpt($value, $length = 88) {
                                             <a href="tel:<?php echo htmlspecialchars($customer_phone); ?>" class="link-primary text-decoration-none">
                                                 <i class="bi bi-telephone me-1" aria-hidden="true"></i><?php echo htmlspecialchars($customer_phone); ?>
                                             </a>
-                                            <div class="small text-secondary mt-1">Cash on Delivery</div>
+                                            <div class="small text-secondary mt-1"><?php echo htmlspecialchars($payment_method); ?> - <?php echo htmlspecialchars($payment_status); ?></div>
                                         </div>
                                         <div class="batch-detail-block">
                                             <div class="small text-secondary fw-semibold text-uppercase mb-1">Items</div>
@@ -660,6 +662,8 @@ function staff_excerpt($value, $length = 88) {
                     $customer_phone = (string) ($d['customer_phone'] ?? ($d['contact_number'] ?? ''));
                     $delivery_address = (string) ($d['delivery_address'] ?? '');
                     $total_amount = (float) ($d['total_amount'] ?? 0);
+                    $payment_method = order_payment_method_label($d['payment_method'] ?? 'cash_on_delivery');
+                    $payment_status = order_payment_status_label($d['payment_status'] ?? 'pending');
                     $order_notes = trim((string) ($d['order_notes'] ?? ''));
                     $delivered_at = (string) ($d['delivered_at'] ?? '');
                     $delivery_notes = trim((string) ($d['delivery_notes'] ?? ''));
@@ -718,7 +722,8 @@ function staff_excerpt($value, $length = 88) {
                             </div>
                             <div class="border rounded-3 p-3">
                                 <div class="small text-secondary fw-semibold text-uppercase mb-1">Payment</div>
-                                <div class="fw-semibold">Cash on Delivery</div>
+                                <div class="fw-semibold"><?php echo htmlspecialchars($payment_method); ?></div>
+                                <div class="small text-secondary"><?php echo htmlspecialchars($payment_status); ?></div>
                             </div>
                         </div>
 

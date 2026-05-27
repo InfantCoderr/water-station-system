@@ -208,7 +208,7 @@ $scheduled_order_units = array_sum(array_map(function ($order) {
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
+    <link href="../../style/admin/admin_compact.css?v=20260528f" rel="stylesheet">
     <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
 <body class="bg-light system-loading skeleton-admin skeleton-admin-orders">
@@ -429,6 +429,8 @@ $scheduled_order_units = array_sum(array_map(function ($order) {
                                             $scheduled_zone_code = (string) ($scheduled_order['zone_code'] ?? '');
                                             $scheduled_zone_name = (string) ($scheduled_order['zone_name'] ?? '');
                                             $scheduled_status = (string) ($scheduled_order['order_status'] ?? $status_filter);
+                                            $scheduled_payment_method = order_payment_method_label($scheduled_order['payment_method'] ?? 'cash_on_delivery');
+                                            $scheduled_payment_status = order_payment_status_label($scheduled_order['payment_status'] ?? 'pending');
                                             $scheduled_capacity_class = admin_queue_capacity_badge_class($scheduled_units, $batch_capacity_limit);
                                         ?>
                                         <tr>
@@ -446,7 +448,10 @@ $scheduled_order_units = array_sum(array_map(function ($order) {
                                                     <span class="badge rounded-pill text-bg-warning">Unzoned</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="small"><?php echo htmlspecialchars($scheduled_items); ?></td>
+                                            <td class="small">
+                                                <div><?php echo htmlspecialchars($scheduled_items); ?></div>
+                                                <div class="text-secondary"><?php echo htmlspecialchars($scheduled_payment_method); ?> - <?php echo htmlspecialchars($scheduled_payment_status); ?></div>
+                                            </td>
                                             <td>
                                                 <span class="badge rounded-pill <?php echo $scheduled_capacity_class; ?>">
                                                     <?php echo $scheduled_units; ?>/<?php echo $batch_capacity_limit; ?> units
@@ -531,6 +536,8 @@ $scheduled_order_units = array_sum(array_map(function ($order) {
                                             $item_summary = (string) ($order['item_summary'] ?? 'No items listed');
                                             $total_quantity = (int) ($order['total_quantity'] ?? 0);
                                             $total_amount = (float) ($order['total_amount'] ?? 0);
+                                            $payment_method = order_payment_method_label($order['payment_method'] ?? 'cash_on_delivery');
+                                            $payment_status = order_payment_status_label($order['payment_status'] ?? 'pending');
                                             $order_status = (string) ($order['order_status'] ?? 'pending');
                                             $delivery_notes = trim((string) ($order['delivery_notes'] ?? ''));
                                             $available_statuses = admin_order_next_statuses($order_status);
@@ -554,7 +561,11 @@ $scheduled_order_units = array_sum(array_map(function ($order) {
                                                 <?php echo htmlspecialchars($item_summary); ?><br>
                                                 <small class="text-secondary">Total qty: <?php echo $total_quantity; ?></small>
                                             </td>
-                                            <td class="fw-semibold">&#8369;<?php echo number_format($total_amount, 2); ?></td>
+                                            <td>
+                                                <div class="fw-semibold">&#8369;<?php echo number_format($total_amount, 2); ?></div>
+                                                <div class="small text-secondary"><?php echo htmlspecialchars($payment_method); ?></div>
+                                                <div class="small text-secondary"><?php echo htmlspecialchars($payment_status); ?></div>
+                                            </td>
                                             <td>
                                                 <span class="badge rounded-pill <?php echo admin_order_status_badge_class($order_status); ?>">
                                                     <?php echo admin_order_status_label($order_status); ?>

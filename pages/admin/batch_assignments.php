@@ -54,7 +54,7 @@ $assigned_batch_items = fetch_delivery_assigned_batch_items_map($conn);
     <link rel="icon" type="image/png" href="../../image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
+    <link href="../../style/admin/admin_compact.css?v=20260528f" rel="stylesheet">
     <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
 <body class="bg-light system-loading skeleton-admin skeleton-admin-batch-assignments">

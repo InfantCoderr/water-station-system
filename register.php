@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Hash password
             $hash = password_hash($password, PASSWORD_DEFAULT);
 
-            ensure_delivery_service_area_schema($conn);
+            ensure_delivery_service_area_schema($conn, true);
 
             $conn->begin_transaction();
             try {
@@ -122,8 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="icon" type="image/png" href="image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/system_skeleton.css?v=20260527d">
 </head>
-<body class="bg-info-subtle">
+<body class="bg-info-subtle system-loading skeleton-auth skeleton-auth-register">
     <main class="container py-3 py-md-4 py-lg-5">
         <section class="card border-0 shadow-lg overflow-hidden rounded-4">
             <div class="row g-0">
@@ -386,5 +387,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             });
         }
     </script>
+    <script src="scripts/system_skeleton.js?v=20260527"></script>
 </body>
 </html>

@@ -400,8 +400,9 @@ if ($orders_needed === 5 && $consecutive > 0) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../style/customer/dashboard.css">
     <link rel="stylesheet" href="../../style/customer/navbar.css">
+    <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
-<body class="bg-light">
+<body class="bg-light system-loading skeleton-customer skeleton-customer-dashboard">
     <?php render_customer_navbar('order'); ?>
 
     <main class="container py-4">
@@ -1203,5 +1204,6 @@ if ($orders_needed === 5 && $consecutive > 0) {
         updateSelectedAddressPreview();
         updatePrice();
     </script>
+    <script src="../../scripts/system_skeleton.js?v=20260527c"></script>
 </body>
 </html>

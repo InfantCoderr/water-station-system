@@ -73,8 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" href="image.gif/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/system_skeleton.css?v=20260527d">
 </head>
-<body class="bg-info-subtle">
+<body class="bg-info-subtle system-loading skeleton-auth skeleton-auth-reset">
     <main class="container py-4 py-md-5">
         <section class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-5">
@@ -248,5 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         }
     </script>
+    <script src="scripts/system_skeleton.js?v=20260527"></script>
 </body>
 </html>

@@ -1,0 +1,509 @@
+body.system-loading {
+    overflow-x: hidden;
+}
+
+body.system-loading::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.58), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#e9eef3 0 0) clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) / min(18rem, 58vw) 1.4rem no-repeat,
+        linear-gradient(#f5f7fa 0 0) clamp(1rem, 4vw, 2rem) calc(clamp(1rem, 4vw, 2rem) + 2.1rem) / min(28rem, 76vw) 0.9rem no-repeat,
+        linear-gradient(#f5f7fa 0 0) clamp(1rem, 4vw, 2rem) calc(clamp(1rem, 4vw, 2rem) + 3.55rem) / min(22rem, 64vw) 0.9rem no-repeat,
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 7rem,
+            rgba(222, 226, 230, 0.72) 7rem,
+            rgba(222, 226, 230, 0.72) 7.08rem
+        ),
+        #f8f9fa;
+    animation: system-skeleton-sweep 1.05s ease-in-out infinite;
+    transition: opacity 0.18s ease;
+    pointer-events: none;
+}
+
+body.system-loading::after {
+    content: "";
+    position: fixed;
+    inset: 7rem clamp(1rem, 4vw, 2rem) auto clamp(1rem, 4vw, 2rem);
+    z-index: 2147483001;
+    height: min(62vh, 31rem);
+    border-radius: 0.75rem;
+    background:
+        linear-gradient(#e9eef3 0 0) 1rem 1rem / 34% 1rem no-repeat,
+        linear-gradient(#f1f3f5 0 0) 1rem 3.25rem / 92% 0.8rem no-repeat,
+        linear-gradient(#f1f3f5 0 0) 1rem 5rem / 74% 0.8rem no-repeat,
+        linear-gradient(#f1f3f5 0 0) 1rem 6.75rem / 82% 0.8rem no-repeat,
+        linear-gradient(#fff 0 0);
+    box-shadow: 0 0.75rem 1.75rem rgba(33, 37, 41, 0.08);
+    transition: opacity 0.18s ease;
+    pointer-events: none;
+}
+
+body.system-loading.system-loading-done::before,
+body.system-loading.system-loading-done::after {
+    opacity: 0;
+}
+
+body.system-loading.skeleton-auth::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(135deg, #0d6efd, #0dcaf0) left top / 42% 100% no-repeat,
+        linear-gradient(#ffffff 0 0) right top / 58% 100% no-repeat,
+        linear-gradient(#dbe7ff 0 0) 6vw 18vh / 18rem 1.6rem no-repeat,
+        linear-gradient(rgba(255, 255, 255, 0.42) 0 0) 6vw calc(18vh + 3rem) / 24rem 0.9rem no-repeat,
+        linear-gradient(rgba(255, 255, 255, 0.3) 0 0) 6vw calc(18vh + 4.7rem) / 18rem 0.9rem no-repeat,
+        linear-gradient(rgba(255, 255, 255, 0.2) 0 0) 6vw 58vh / 20rem 8rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-auth::after {
+    inset: 12vh 8vw auto auto;
+    width: min(34rem, 48vw);
+    height: min(76vh, 39rem);
+    background:
+        linear-gradient(#e7edf5 0 0) 2rem 2rem / 12rem 1.1rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 2rem 4.2rem / 22rem 0.85rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 7.2rem / calc(100% - 4rem) 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 11.3rem / calc(100% - 4rem) 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 15.4rem / calc(100% - 4rem) 3rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 2rem calc(100% - 5.2rem) / calc(100% - 4rem) 3.1rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-auth-login::after,
+body.system-loading.skeleton-auth-reset::after {
+    height: min(58vh, 28rem);
+    background:
+        linear-gradient(#e7edf5 0 0) 2rem 2rem / 10rem 1.1rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 2rem 4.2rem / 19rem 0.85rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 7.4rem / calc(100% - 4rem) 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 11.5rem / calc(100% - 4rem) 3rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 2rem calc(100% - 5.2rem) / calc(100% - 4rem) 3.1rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(180deg, #062034, #0f4c6f) 1rem 1rem / 17.5rem calc(100vh - 2rem) no-repeat,
+        linear-gradient(#dfe7ef 0 0) 20rem 1.2rem / 18rem 1.3rem no-repeat,
+        linear-gradient(#ffffff 0 0) 20rem 4.5rem / calc(100vw - 22rem) 4rem no-repeat,
+        linear-gradient(#ffffff 0 0) 20rem 10rem / 17vw 7rem no-repeat,
+        linear-gradient(#ffffff 0 0) calc(20rem + 18vw) 10rem / 17vw 7rem no-repeat,
+        linear-gradient(#ffffff 0 0) calc(20rem + 36vw) 10rem / 17vw 7rem no-repeat,
+        linear-gradient(#ffffff 0 0) calc(20rem + 54vw) 10rem / 17vw 7rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-admin::after {
+    inset: 18.5rem 2rem auto 20rem;
+    height: min(54vh, 30rem);
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 12rem 1rem no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3.35rem, #eef2f6 3.35rem, #eef2f6 3.45rem),
+        linear-gradient(90deg, #eef2f6 18%, transparent 18% 20%, #eef2f6 20% 42%, transparent 42% 45%, #eef2f6 45% 63%, transparent 63% 66%, #eef2f6 66% 82%, transparent 82%),
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-dashboard::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 12rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 3.4rem / 62% 18rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(62% + 2rem) 3.4rem / calc(38% - 3rem) 18rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 23rem / calc(100% - 2rem) 5rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-orders::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 13rem 1rem no-repeat,
+        linear-gradient(#fff4d6 0 0) 1rem 3.4rem / calc(100% - 2rem) 5rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 4.6rem / 16rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 2rem 6.6rem / 60% 0.8rem no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3.35rem, #eef2f6 3.35rem, #eef2f6 3.45rem),
+        linear-gradient(90deg, #eef2f6 12%, transparent 12% 15%, #eef2f6 15% 38%, transparent 38% 42%, #eef2f6 42% 62%, transparent 62% 66%, #eef2f6 66% 80%, transparent 80% 84%, #dbe7ff 84% 97%, transparent 97%),
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-order-batches::after,
+body.system-loading.skeleton-admin-batch-assignments::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 14rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 3.5rem / 31% 9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(34% + 1rem) 3.5rem / 31% 9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(67% + 1rem) 3.5rem / calc(32% - 2rem) 9rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 2rem 14.4rem / 13rem 1rem no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3.5rem, #eef2f6 3.5rem, #eef2f6 3.62rem),
+        linear-gradient(90deg, #eef2f6 18%, transparent 18% 22%, #eef2f6 22% 56%, transparent 56% 60%, #eef2f6 60% 82%, transparent 82%),
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-inventory::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 12rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 3.6rem / 18% 9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 21% 3.6rem / 18% 9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 41% 3.6rem / 18% 9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 61% 3.6rem / 18% 9rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) 2rem 4.6rem / 5rem 5rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) calc(21% + 1rem) 4.6rem / 5rem 5rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) calc(41% + 1rem) 4.6rem / 5rem 5rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) calc(61% + 1rem) 4.6rem / 5rem 5rem no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3.35rem, #eef2f6 3.35rem, #eef2f6 3.45rem),
+        linear-gradient(90deg, #eef2f6 22%, transparent 22% 26%, #eef2f6 26% 44%, transparent 44% 48%, #eef2f6 48% 65%, transparent 65% 69%, #eef2f6 69% 86%, transparent 86%),
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-customers::after,
+body.system-loading.skeleton-admin-staff::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 13rem 1rem no-repeat,
+        radial-gradient(circle at 3rem 5rem, #d8e0ea 0 1.15rem, transparent 1.2rem),
+        radial-gradient(circle at 3rem 8.8rem, #d8e0ea 0 1.15rem, transparent 1.2rem),
+        radial-gradient(circle at 3rem 12.6rem, #d8e0ea 0 1.15rem, transparent 1.2rem),
+        radial-gradient(circle at 3rem 16.4rem, #d8e0ea 0 1.15rem, transparent 1.2rem),
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3.7rem, #eef2f6 3.7rem, #eef2f6 3.82rem),
+        linear-gradient(90deg, transparent 0 6%, #eef2f6 6% 27%, transparent 27% 31%, #eef2f6 31% 55%, transparent 55% 60%, #eef2f6 60% 78%, transparent 78% 82%, #dbe7ff 82% 96%, transparent 96%),
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-exceptions::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 13rem 1rem no-repeat,
+        linear-gradient(#fde2e1 0 0) 1rem 3.6rem / calc(100% - 2rem) 4.2rem no-repeat,
+        linear-gradient(#fff4d6 0 0) 1rem 8.8rem / calc(100% - 2rem) 4.2rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 15rem / calc(100% - 2rem) 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 19rem / calc(100% - 2rem) 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 23rem / calc(100% - 2rem) 3rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-admin-reports::after {
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 13rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 3.4rem / 30% 7rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 34% 3.4rem / 30% 7rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 67% 3.4rem / calc(32% - 1rem) 7rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 12rem / 62% 15rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(62% + 2rem) 12rem / calc(38% - 3rem) 15rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-customer::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+        linear-gradient(#dfe7ef 0 0) 7vw 6.8rem / 16rem 1.25rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 7vw 8.8rem / 24rem 0.85rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 11rem / 48vw 10rem no-repeat,
+        linear-gradient(#ffffff 0 0) 57vw 11rem / 36vw 10rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 22.5rem / 86vw 31rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 55rem / 86vw 16rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-customer::after {
+    inset: 24.3rem 9vw auto 9vw;
+    height: 27rem;
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 12rem 1rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) 2rem 4rem / 10rem 10rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 13rem 4.5rem / 11rem 0.9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 13rem 6.4rem / 8rem 0.75rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) calc(36% + 2rem) 4rem / 10rem 10rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(36% + 13rem) 4.5rem / 11rem 0.9rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(36% + 13rem) 6.4rem / 8rem 0.75rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 16.5rem / 63% 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 20.4rem / 63% 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 24.3rem / 63% 1.3rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) calc(66% + 1rem) 16.5rem / calc(34% - 2rem) 2.4rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(66% + 1rem) 19.8rem / calc(34% - 2rem) 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(66% + 1rem) 21.7rem / calc(34% - 2rem) 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) calc(66% + 1rem) 23.6rem / calc(34% - 2rem) 1rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-customer-dashboard::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+        linear-gradient(#dfe7ef 0 0) 7vw 6.8rem / 16rem 1.25rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 7vw 8.8rem / 24rem 0.85rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 11rem / 48vw 10rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 9vw 13rem / 14rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 9vw 15.2rem / 35vw 0.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 9vw 17rem / 28vw 0.8rem no-repeat,
+        linear-gradient(#ffffff 0 0) 57vw 11rem / 36vw 10rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 59vw 13rem / 14rem 1rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) 59vw 16rem / 8vw 3rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) 69vw 16rem / 8vw 3rem no-repeat,
+        linear-gradient(#d8e0ea 0 0) 79vw 16rem / 8vw 3rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 22.5rem / 86vw 31rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 55rem / 86vw 16rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 9vw 57rem / 14rem 1rem no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0, transparent 3rem, #eef2f6 3rem, #eef2f6 3.1rem) 9vw 60rem / 82vw 8rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-customer-history::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+        linear-gradient(#dfe7ef 0 0) 7vw 7rem / 18rem 1.35rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 7vw 9.1rem / 28rem 0.85rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 12rem / 20vw 6rem no-repeat,
+        linear-gradient(#ffffff 0 0) 29vw 12rem / 20vw 6rem no-repeat,
+        linear-gradient(#ffffff 0 0) 51vw 12rem / 20vw 6rem no-repeat,
+        linear-gradient(#ffffff 0 0) 73vw 12rem / 20vw 6rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 21rem / 86vw 34rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-customer-history::after {
+    inset: 23rem 9vw auto 9vw;
+    height: 29rem;
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 14rem 1rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 1rem 4rem / 7rem 1.1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 6.1rem / 18rem 0.85rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 8rem / calc(100% - 2rem) 0.85rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 1rem 11.2rem / 7rem 1.1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 13.3rem / 18rem 0.85rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 15.2rem / calc(100% - 2rem) 0.85rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 1rem 18.4rem / 7rem 1.1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 20.5rem / 18rem 0.85rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 22.4rem / calc(100% - 2rem) 0.85rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+body.system-loading.skeleton-customer-profile::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+        linear-gradient(#dfe7ef 0 0) 7vw 7rem / 16rem 1.35rem no-repeat,
+        linear-gradient(#f1f4f8 0 0) 7vw 9.1rem / 25rem 0.85rem no-repeat,
+        linear-gradient(#ffffff 0 0) 7vw 12rem / 29vw 17rem no-repeat,
+        radial-gradient(circle at 12vw 16rem, #d8e0ea 0 3rem, transparent 3.05rem),
+        linear-gradient(#eef2f6 0 0) 10vw 21rem / 14rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 10vw 23rem / 18vw 0.8rem no-repeat,
+        linear-gradient(#ffffff 0 0) 38vw 12rem / 55vw 14rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 15rem / 22vw 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 64vw 15rem / 22vw 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 19rem / 22vw 2.8rem no-repeat,
+        linear-gradient(#dbe7ff 0 0) 40vw 23rem / 10rem 2.6rem no-repeat,
+        linear-gradient(#ffffff 0 0) 38vw 28rem / 55vw 13rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 31rem / 49vw 3rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 35rem / 49vw 3rem no-repeat,
+        linear-gradient(#ffffff 0 0) 38vw 43rem / 55vw 13rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 46rem / 49vw 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 40vw 50rem / 22vw 2.8rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 64vw 50rem / 22vw 2.8rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-staff::before {
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+        linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.4rem no-repeat,
+        linear-gradient(#dfe7ef 0 0) 6vw 7rem / 18rem 1.35rem no-repeat,
+        linear-gradient(#ffffff 0 0) 6vw 11rem / 42vw 13rem no-repeat,
+        linear-gradient(#ffffff 0 0) 52vw 11rem / 42vw 13rem no-repeat,
+        linear-gradient(#ffffff 0 0) 6vw 26rem / 88vw 20rem no-repeat,
+        #f8f9fa;
+    animation: system-skeleton-pulse 1.15s ease-in-out infinite;
+}
+
+body.system-loading.skeleton-staff::after {
+    inset: 28rem 7vw auto 7vw;
+    height: 16rem;
+    background:
+        linear-gradient(#dfe7ef 0 0) 1rem 1rem / 13rem 1rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 3.6rem / calc(100% - 2rem) 3.2rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 7.6rem / calc(100% - 2rem) 3.2rem no-repeat,
+        linear-gradient(#eef2f6 0 0) 1rem 11.6rem / calc(100% - 2rem) 3.2rem no-repeat,
+        linear-gradient(#ffffff 0 0);
+}
+
+.skeleton-block,
+.skeleton-line,
+.skeleton-card {
+    position: relative;
+    overflow: hidden;
+    color: transparent !important;
+    background: #e9eef3 !important;
+}
+
+.skeleton-line {
+    min-height: 0.85rem;
+    border-radius: 999px;
+}
+
+.skeleton-card {
+    min-height: 8rem;
+    border-radius: 0.5rem;
+}
+
+.skeleton-block::after,
+.skeleton-line::after,
+.skeleton-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), transparent);
+    animation: system-skeleton-inline 1.1s ease-in-out infinite;
+}
+
+@keyframes system-skeleton-sweep {
+    to {
+        background-position:
+            calc(100% + 42rem) 0,
+            clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem),
+            clamp(1rem, 4vw, 2rem) calc(clamp(1rem, 4vw, 2rem) + 2.1rem),
+            clamp(1rem, 4vw, 2rem) calc(clamp(1rem, 4vw, 2rem) + 3.55rem),
+            0 0,
+            0 0;
+    }
+}
+
+@keyframes system-skeleton-inline {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes system-skeleton-pulse {
+    50% {
+        filter: brightness(0.985);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.system-loading::before,
+    .skeleton-block::after,
+    .skeleton-line::after,
+    .skeleton-card::after {
+        animation: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.system-loading.skeleton-auth::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(135deg, #0d6efd, #0dcaf0) 0 0 / 100% 10rem no-repeat,
+            #f8f9fa;
+    }
+
+    body.system-loading.skeleton-auth::after {
+        inset: 12rem 1rem auto 1rem;
+        width: auto;
+    }
+
+    body.system-loading.skeleton-admin::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 1rem / calc(100% - 2rem) 4rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 6rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) calc(50% + 0.5rem) 6rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 13rem / calc(100% - 2rem) 24rem no-repeat,
+            #f8f9fa;
+    }
+
+    body.system-loading.skeleton-admin::after,
+    body.system-loading.skeleton-customer::after,
+    body.system-loading.skeleton-staff::after {
+        inset: 15rem 1rem auto 1rem;
+        height: 18rem;
+    }
+
+    body.system-loading.skeleton-customer::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 6rem / calc(100% - 2rem) 8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 15rem / calc(100% - 2rem) 8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 24rem / calc(100% - 2rem) 24rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 49rem / calc(100% - 2rem) 13rem no-repeat,
+            #f8f9fa;
+    }
+
+    body.system-loading.skeleton-customer::after {
+        inset: 25.5rem 2rem auto 2rem;
+        height: 20rem;
+        background:
+            linear-gradient(#dfe7ef 0 0) 1rem 1rem / 10rem 1rem no-repeat,
+            linear-gradient(#d8e0ea 0 0) 1rem 3.2rem / 7rem 7rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 9rem 3.8rem / calc(100% - 10rem) 0.9rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 9rem 5.8rem / calc(100% - 13rem) 0.8rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 1rem 11.2rem / calc(100% - 2rem) 3rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 1rem 15.2rem / calc(100% - 2rem) 3rem no-repeat,
+            linear-gradient(#ffffff 0 0);
+    }
+
+    body.system-loading.skeleton-customer-history::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 6rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) calc(50% + 0.5rem) 6rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 13rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) calc(50% + 0.5rem) 13rem / calc(50% - 1.5rem) 6rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 21rem / calc(100% - 2rem) 25rem no-repeat,
+            #f8f9fa;
+    }
+
+    body.system-loading.skeleton-customer-history::after {
+        inset: 22.5rem 2rem auto 2rem;
+        height: 21rem;
+        background:
+            linear-gradient(#dfe7ef 0 0) 1rem 1rem / 12rem 1rem no-repeat,
+            linear-gradient(#dbe7ff 0 0) 1rem 4rem / 7rem 1.1rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 1rem 6.1rem / calc(100% - 2rem) 0.85rem no-repeat,
+            linear-gradient(#dbe7ff 0 0) 1rem 9.8rem / 7rem 1.1rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 1rem 11.9rem / calc(100% - 2rem) 0.85rem no-repeat,
+            linear-gradient(#dbe7ff 0 0) 1rem 15.6rem / 7rem 1.1rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 1rem 17.7rem / calc(100% - 2rem) 0.85rem no-repeat,
+            linear-gradient(#ffffff 0 0);
+    }
+
+    body.system-loading.skeleton-customer-profile::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 6rem / calc(100% - 2rem) 9rem no-repeat,
+            radial-gradient(circle at 4.2rem 9.2rem, #d8e0ea 0 2.2rem, transparent 2.25rem),
+            linear-gradient(#eef2f6 0 0) 7.5rem 8rem / 10rem 0.9rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 7.5rem 10rem / calc(100% - 10rem) 0.75rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 16rem / calc(100% - 2rem) 13rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 18.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 22.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 30rem / calc(100% - 2rem) 12rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 32.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 36.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 43rem / calc(100% - 2rem) 12rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 45.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            linear-gradient(#eef2f6 0 0) 2rem 49.5rem / calc(100% - 4rem) 2.8rem no-repeat,
+            #f8f9fa;
+    }
+
+    body.system-loading.skeleton-staff::before {
+        background:
+            linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent) -42rem 0 / 42rem 100% no-repeat,
+            linear-gradient(#0d6efd 0 0) 0 0 / 100% 4.2rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 6rem / calc(100% - 2rem) 8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 15rem / calc(100% - 2rem) 8rem no-repeat,
+            linear-gradient(#ffffff 0 0) 1rem 24rem / calc(100% - 2rem) 14rem no-repeat,
+            #f8f9fa;
+    }
+}

@@ -109,7 +109,7 @@ function ensure_index_exists($conn, $table, $index, $definition) {
     }
 }
 
-function ensure_delivery_service_area_schema($conn) {
+function ensure_delivery_service_area_schema($conn, $force_seed = false) {
     $conn->query("
         CREATE TABLE IF NOT EXISTS customer_delivery_addresses (
             address_id INT(11) NOT NULL AUTO_INCREMENT,
@@ -161,7 +161,19 @@ function ensure_delivery_service_area_schema($conn) {
     ensure_column_exists($conn, 'orders', 'delivery_city', "`delivery_city` VARCHAR(120) DEFAULT NULL AFTER `delivery_barangay`");
     ensure_column_exists($conn, 'orders', 'delivery_province', "`delivery_province` VARCHAR(120) DEFAULT NULL AFTER `delivery_city`");
 
-    seed_delivery_service_areas($conn);
+    if ($force_seed || delivery_service_area_count($conn) === 0) {
+        seed_delivery_service_areas($conn);
+    }
+}
+
+function delivery_service_area_count($conn) {
+    $result = $conn->query("SELECT COUNT(*) AS count FROM delivery_service_areas");
+    if (!$result) {
+        return 0;
+    }
+
+    $row = $result->fetch_assoc();
+    return (int) ($row['count'] ?? 0);
 }
 
 function seed_delivery_service_areas($conn) {
@@ -196,8 +208,12 @@ function seed_delivery_service_areas($conn) {
 }
 
 function fetch_delivery_service_areas($conn) {
-    ensure_delivery_service_area_schema($conn);
     $result = $conn->query("SELECT area_id, province, city, barangay, zone_code, zone_name, zone_sort_order FROM delivery_service_areas WHERE is_active = 1 ORDER BY province ASC, city ASC, zone_sort_order ASC, barangay ASC");
+    if (!$result) {
+        ensure_delivery_service_area_schema($conn, true);
+        $result = $conn->query("SELECT area_id, province, city, barangay, zone_code, zone_name, zone_sort_order FROM delivery_service_areas WHERE is_active = 1 ORDER BY province ASC, city ASC, zone_sort_order ASC, barangay ASC");
+    }
+
     return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }
 

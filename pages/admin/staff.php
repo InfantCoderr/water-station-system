@@ -180,8 +180,9 @@ $edit_address = (string) ($edit_staff['address'] ?? '');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="../../style/admin/admin_compact.css?v=20260527" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/system_skeleton.css?v=20260527d">
 </head>
-<body class="bg-light">
+<body class="bg-light system-loading skeleton-admin skeleton-admin-staff">
     <div class="container-fluid p-0">
         <div class="row g-0">
         <aside class="admin-floating-sidebar offcanvas-lg offcanvas-start col-lg-3 col-xl-2 text-white bg-israphil-sidebar d-flex flex-column p-3 min-vh-100" tabindex="-1" id="adminSidebar" aria-labelledby="adminSidebarLabel">
@@ -526,5 +527,6 @@ $edit_address = (string) ($edit_staff['address'] ?? '');
             pendingAdminConfirmForm.submit();
         });
     </script>
+    <script src="../../scripts/system_skeleton.js?v=20260527"></script>
 </body>
 </html>
